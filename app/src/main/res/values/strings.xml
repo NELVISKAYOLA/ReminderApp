@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ReminderApp</string>
+    <string name="title_home">Home</string>
+    <string name="title_calendar">Calendar</string>
+    <string name="title_insights">Insights</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_search">Search</string>
+    <string name="menu_feedback">User Feedback</string>
+    <string name="menu_privacy">Privacy Policy</string>
+    <string name="menu_terms">Terms and Policy</string>
+    <string name="menu_theme">Theme</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="luxury_purple">#9B6BB3</color>
+    <color name="cream_bg">#FFFDD0</color>
+    <color name="date_blue">#9B6BB3</color> <!-- Unified with purple -->
+    <color name="background_gray">#FFFDD0</color> <!-- Using cream -->
+    <color name="text_gray">#4A4A4A</color>
+
+    <color name="app_background">#FFFDD0</color> <!-- Cream -->
+    <color name="card_background">#FFFFFF</color> <!-- White -->
+    <color name="main_text">#FF000000</color> <!-- Black -->
+    <color name="secondary_text">#4A4A4A</color>
+</resources>
