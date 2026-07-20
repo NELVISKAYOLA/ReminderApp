@@ -14,17 +14,52 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tvItemContent"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/ivItemIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/luxury_purple"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="Reminder Icon" />
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Reminder Content"
-            android:textColor="@color/main_text"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvItemContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Reminder Content"
+                android:textColor="@color/main_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvItemSubtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subtitle/Time"
+                android:textColor="@color/subtext_color"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivPriorityIcon"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_priority"
+            app:tint="#FF3B30"
+            android:visibility="gone"
+            android:contentDescription="Priority" />
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

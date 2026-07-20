@@ -19,6 +19,15 @@ public interface ReminderDao {
     @Query("SELECT * FROM reminders WHERE userId = :userId ORDER BY date ASC")
     List<ReminderEntity> getRemindersForUser(int userId);
 
+    @Query("SELECT * FROM reminders WHERE userId = :userId AND isPrivate = 1 ORDER BY date ASC")
+    List<ReminderEntity> getPrivateRemindersForUser(int userId);
+
+    @Query("SELECT * FROM reminders WHERE userId = :userId AND isPrivate = 0 ORDER BY date ASC")
+    List<ReminderEntity> getPublicRemindersForUser(int userId);
+
+    @Query("SELECT * FROM reminders WHERE userId = :userId AND isCompleted = 1 ORDER BY date DESC")
+    List<ReminderEntity> getCompletedRemindersForUser(int userId);
+
     @Delete
     void delete(ReminderEntity reminder);
 }

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class ReminderDetailActivity extends AppCompatActivity {
 
-    private TextView tvTitle, tvNotes, tvDate, tvTime, tvPriority, tvRepeat, tvDuration;
+    private TextView tvTitle, tvNotes, tvDate, tvTime, tvPriority, tvRepeat;
     private int reminderId;
     private ReminderEntity currentReminder;
     private AppDatabase db;
@@ -41,7 +41,6 @@ public class ReminderDetailActivity extends AppCompatActivity {
         tvTime = findViewById(R.id.tvDetailTime);
         tvPriority = findViewById(R.id.tvDetailPriority);
         tvRepeat = findViewById(R.id.tvDetailRepeat);
-        tvDuration = findViewById(R.id.tvDetailDuration);
 
         Button btnEdit = findViewById(R.id.btnEditReminder);
         Button btnDelete = findViewById(R.id.btnDeleteReminder);
@@ -81,9 +80,8 @@ public class ReminderDetailActivity extends AppCompatActivity {
             tvNotes.setText(currentReminder.getNotes());
             tvDate.setText(currentReminder.getDate());
             tvTime.setText(currentReminder.getTime());
-            tvPriority.setText("Priority: " + currentReminder.getPriority());
-            tvRepeat.setText("Repeat: " + currentReminder.getRepeat());
-            tvDuration.setText("Duration: " + currentReminder.getDuration());
+            tvPriority.setText(currentReminder.getPriority());
+            tvRepeat.setText("Repeats: " + currentReminder.getRepeat());
         }
     }
 
@@ -95,7 +93,6 @@ public class ReminderDetailActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (NavigationHelper.handleOptionsMenu(this, item)) return true;
         return super.onOptionsItemSelected(item);
     }
 }

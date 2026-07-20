@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,6 +40,13 @@ public class PrivateRemindersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private_reminders);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         db = AppDatabase.getInstance(this);
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
@@ -86,7 +96,26 @@ public class PrivateRemindersActivity extends AppCompatActivity {
     }
 
     private void authenticate() {
-        biometricPrompt.authenticate(promptInfo);
+        BiometricManager biometricManager = BiometricManager.from(this);
+        switch (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG | BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                biometricPrompt.authenticate(promptInfo);
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Toast.makeText(this, "No biometric hardware found", Toast.LENGTH_SHORT).show();
+                showPrivateReminders(); // Fallback for testing/unsupported devices
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Toast.makeText(this, "Biometric hardware is currently unavailable", Toast.LENGTH_SHORT).show();
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Toast.makeText(this, "No biometrics enrolled", Toast.LENGTH_SHORT).show();
+                showPrivateReminders(); // Fallback
+                break;
+            default:
+                Toast.makeText(this, "Biometric authentication error", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 
     private void showPrivateReminders() {
@@ -119,7 +148,11 @@ public class PrivateRemindersActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             ReminderEntity reminder = reminders.get(position);
-            holder.tvContent.setText(reminder.getTitle() + " [" + reminder.getTime() + "]");
+            holder.tvContent.setText(reminder.getTitle());
+            holder.tvSubtext.setText(reminder.getDate() + " " + reminder.getTime());
+            holder.tvSubtext.setVisibility(View.VISIBLE);
+            holder.ivIcon.setImageResource(R.drawable.ic_lock);
+            
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(PrivateRemindersActivity.this, ReminderDetailActivity.class);
                 intent.putExtra("reminder_id", reminder.getId());
@@ -133,10 +166,13 @@ public class PrivateRemindersActivity extends AppCompatActivity {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvContent;
+            TextView tvContent, tvSubtext;
+            ImageView ivIcon;
             ViewHolder(View itemView) {
                 super(itemView);
                 tvContent = itemView.findViewById(R.id.tvItemContent);
+                tvSubtext = itemView.findViewById(R.id.tvItemSubtext);
+                ivIcon = itemView.findViewById(R.id.ivItemIcon);
             }
         }
     }

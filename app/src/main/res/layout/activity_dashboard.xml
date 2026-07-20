@@ -1,136 +1,249 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background">
+    android:background="@color/app_background"
+    tools:openDrawer="start">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <!-- 1. Top Bar with Persistent Search (Point 6) -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="My events"
-            app:titleTextColor="@color/main_text"
-            app:contentInsetStart="16dp"
-            app:contentInsetEnd="8dp" />
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <!-- Top Half: Date Section -->
-        <LinearLayout
-            android:id="@+id/dateSection"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:padding="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/remindersSection"
-            app:layout_constraintHeight_percent="0.35"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <TextView
-                android:id="@+id/tvDayOfWeek"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Wednesday"
-                android:textColor="@color/luxury_purple"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvDay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="20"
-                android:textColor="@color/main_text"
-                android:textSize="80sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvMonthYear"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="May 2026"
-                android:textColor="@color/main_text"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <!-- Bottom Half: Reminders Section -->
-        <LinearLayout
-            android:id="@+id/remindersSection"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@drawable/bg_reminders_container"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            android:padding="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/dateSection">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="Your Reminders"
-                android:textColor="@color/main_text"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <ListView
-                android:id="@+id/lvReminders"
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="12dp"
-                android:clipToPadding="false"
-                android:paddingBottom="80dp"
-                tools:listitem="@layout/item_card" />
-        </LinearLayout>
+                android:layout_height="?attr/actionBarSize"
+                app:title="Todays event"
+                app:titleTextColor="@color/main_text"
+                app:navigationIcon="@drawable/ic_menu"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:contentInsetStart="16dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- Persistent Search Bar -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/search_bar_layout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="8dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:startIconDrawable="@drawable/ic_search"
+                app:layout_scrollFlags="scroll|enterAlways">
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:backgroundTint="@color/card_background"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="30dp"
-        app:fabCradleVerticalOffset="0dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/hint_search"
+                    android:inputType="text"
+                    android:importantForAccessibility="yes" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    </com.google.android.material.bottomappbar.BottomAppBar>
+            <!-- 2. Interactive Date Header / Calendar Strip (Point 4) -->
+            <!-- Note: For better performance, this can also be a RecyclerView -->
+            <HorizontalScrollView
+                android:id="@+id/date_strip_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
+                <LinearLayout
+                    android:id="@+id/date_strip_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Example Date Chips (Usually generated dynamically) -->
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mon\n18"
+                        android:textSize="12sp"
+                        android:minWidth="56dp"
+                        android:minHeight="64dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.Material3.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tue\n19"
+                        android:textSize="12sp"
+                        android:minWidth="56dp"
+                        android:minHeight="64dp"
+                        android:layout_marginEnd="8dp"
+                        android:backgroundTint="@color/luxury_purple" />
+
+                    <com.google.android.material.button.MaterialButton
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Wed\n20"
+                        android:textSize="12sp"
+                        android:minWidth="56dp"
+                        android:minHeight="64dp"
+                        android:layout_marginEnd="8dp" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <!-- 3. Bottom Sheet Reminders Section (Point 3: MaterialCardView & 8dp grid) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/reminders_card"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@color/card_background"
+                app:cardElevation="8dp"
+                app:cardCornerRadius="24dp"
+                app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.TopRoundedCorners"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/date_strip_scroll">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:id="@+id/tv_reminders_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_reminders"
+                        android:textColor="@color/main_text"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- 4. RecyclerView (Point 1) -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_reminders"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="16dp"
+                        android:clipToPadding="false"
+                        android:paddingBottom="96dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_reminders_title"
+                        tools:listitem="@layout/item_card" />
+
+                    <!-- 5. Empty State View (Point 2) -->
+                    <LinearLayout
+                        android:id="@+id/empty_state_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_reminders_title">
+
+                        <ImageView
+                            android:id="@+id/iv_empty_state"
+                            android:layout_width="120dp"
+                            android:layout_height="120dp"
+                            android:src="@drawable/ic_empty_state"
+                            android:contentDescription="@string/content_desc_empty_state"
+                            app:tint="@color/luxury_purple" />
+
+                        <TextView
+                            android:id="@+id/tv_empty_state"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/empty_state_title"
+                            android:textColor="@color/main_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/empty_state_subtitle"
+                            android:textColor="@color/subtext_color"
+                            android:textSize="14sp"
+                            android:layout_marginTop="8dp"/>
+                    </LinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 6. Enhanced Bottom Bar (Point 5) -->
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:backgroundTint="@color/card_background"
+            app:fabAlignmentMode="center"
+            app:fabCradleMargin="12dp"
+            app:fabCradleRoundedCornerRadius="16dp"
+            app:fabCradleVerticalOffset="0dp"
+            app:elevation="8dp">
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                app:elevation="0dp"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/bottom_nav_menu" />
+        </com.google.android.material.bottomappbar.BottomAppBar>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/luxury_purple"
+            app:layout_anchor="@id/bottomAppBar"
+            app:tint="@color/white"
+            android:contentDescription="@string/content_desc_add_reminder" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Navigation Drawer (Point 8: Accessibility) -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/luxury_purple"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="@color/white"
-        android:contentDescription="Add New Reminder" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header"
+        android:background="?android:attr/windowBackground" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

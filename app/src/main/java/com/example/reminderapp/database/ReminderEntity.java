@@ -15,8 +15,10 @@ public class ReminderEntity {
     private String duration;
     private String repeat;
     private String priority;
+    private boolean isPrivate;
+    private boolean isCompleted;
 
-    public ReminderEntity(int userId, String title, String notes, String date, String time, String duration, String repeat, String priority) {
+    public ReminderEntity(int userId, String title, String notes, String date, String time, String duration, String repeat, String priority, boolean isPrivate) {
         this.userId = userId;
         this.title = title;
         this.notes = notes;
@@ -25,6 +27,8 @@ public class ReminderEntity {
         this.duration = duration;
         this.repeat = repeat;
         this.priority = priority;
+        this.isPrivate = isPrivate;
+        this.isCompleted = false;
     }
 
     // Getters and Setters
@@ -46,4 +50,8 @@ public class ReminderEntity {
     public void setRepeat(String repeat) { this.repeat = repeat; }
     public String getPriority() { return priority; }
     public void setPriority(String priority) { this.priority = priority; }
+    public boolean isPrivate() { return isPrivate; }
+    public void setPrivate(boolean aPrivate) { isPrivate = aPrivate; }
+    public boolean isCompleted() { return isCompleted; }
+    public void setCompleted(boolean completed) { isCompleted = completed; }
 }

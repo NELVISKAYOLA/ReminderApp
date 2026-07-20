@@ -3,16 +3,18 @@ package com.example.reminderapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.reminderapp.database.AppDatabase;
 import com.example.reminderapp.database.ReminderEntity;
@@ -21,41 +23,40 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private ListView lvReminders;
-    private TextView tvDayOfWeek, tvDay, tvMonthYear;
+    private RecyclerView rvReminders;
+    private View emptyStateLayout;
     private AppDatabase db;
     private int activeUserId;
+    private ReminderAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        
         NavigationHelper.setupNavigation(this);
         db = AppDatabase.getInstance(this);
 
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
         activeUserId = prefs.getInt("active_user_id", -1);
 
-        // Initialize Views
-        lvReminders = findViewById(R.id.lvReminders);
-        tvDayOfWeek = findViewById(R.id.tvDayOfWeek);
-        tvDay = findViewById(R.id.tvDay);
-        tvMonthYear = findViewById(R.id.tvMonthYear);
+        rvReminders = findViewById(R.id.rv_reminders);
+        emptyStateLayout = findViewById(R.id.empty_state_layout);
+        
+        rvReminders.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ReminderAdapter();
+        rvReminders.setAdapter(adapter);
 
-        // Set Current Date
-        setCurrentDate();
-
-        lvReminders.setOnItemClickListener((parent, view, position, id) -> {
-            ReminderEntity reminder = (ReminderEntity) parent.getItemAtPosition(position);
-            if (reminder != null) {
-                Intent intent = new Intent(DashboardActivity.this, ReminderDetailActivity.class);
-                intent.putExtra("reminder_id", reminder.getId());
-                startActivity(intent);
-            }
+        findViewById(R.id.fabAdd).setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, AddeventActivity.class);
+            startActivity(intent);
         });
     }
 
@@ -68,52 +69,95 @@ public class DashboardActivity extends AppCompatActivity {
     private void loadReminders() {
         if (activeUserId == -1) return;
 
-        List<ReminderEntity> reminders = db.reminderDao().getRemindersForUser(activeUserId);
-        
-        ArrayAdapter<ReminderEntity> adapter = new ArrayAdapter<ReminderEntity>(this,
-                R.layout.item_card, R.id.tvItemContent, reminders) {
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text = view.findViewById(R.id.tvItemContent);
-                ReminderEntity reminder = getItem(position);
-                if (reminder != null) {
-                    text.setText(reminder.getTitle() + " (" + reminder.getPriority() + ")");
-                }
-                return view;
-            }
-        };
-        lvReminders.setAdapter(adapter);
-    }
-
-    private void setCurrentDate() {
         Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayStr = sdf.format(calendar.getTime());
+
+        List<ReminderEntity> allReminders = db.reminderDao().getPublicRemindersForUser(activeUserId);
+        List<ReminderEntity> todaysReminders = allReminders.stream()
+                .filter(r -> r.getDate().equals(todayStr) && !r.isCompleted())
+                .collect(Collectors.toList());
         
-        SimpleDateFormat dayOfWeekFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
-        SimpleDateFormat dayFormat = new SimpleDateFormat("dd", Locale.getDefault());
-        SimpleDateFormat monthYearFormat = new SimpleDateFormat("MMMM yyyy", Locale.getDefault());
-
-        tvDayOfWeek.setText(dayOfWeekFormat.format(calendar.getTime()));
-        tvDay.setText(dayFormat.format(calendar.getTime()));
-        tvMonthYear.setText(monthYearFormat.format(calendar.getTime()));
+        if (todaysReminders.isEmpty()) {
+            rvReminders.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.VISIBLE);
+        } else {
+            rvReminders.setVisibility(View.VISIBLE);
+            emptyStateLayout.setVisibility(View.GONE);
+            adapter.setReminders(todaysReminders);
+        }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
+    private class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
+        private List<ReminderEntity> reminders;
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
-            startActivity(new Intent(this, SearchActivity.class));
-            return true;
+        public void setReminders(List<ReminderEntity> reminders) {
+            this.reminders = reminders;
+            notifyDataSetChanged();
         }
-        if (NavigationHelper.handleOptionsMenu(this, item)) {
-            return true;
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
+            return new ViewHolder(view);
         }
-        return super.onOptionsItemSelected(item);
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            ReminderEntity reminder = reminders.get(position);
+            holder.tvContent.setText(reminder.getTitle());
+            holder.tvSubtext.setText(reminder.getTime() + (reminder.getDuration().isEmpty() ? "" : " • " + reminder.getDuration()));
+            holder.tvSubtext.setVisibility(View.VISIBLE);
+            
+            if (reminder.getPriority().equalsIgnoreCase("Urgent") || reminder.getPriority().equalsIgnoreCase("High")) {
+                holder.ivPriority.setVisibility(View.VISIBLE);
+            } else {
+                holder.ivPriority.setVisibility(View.GONE);
+            }
+
+            holder.itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(DashboardActivity.this, ReminderDetailActivity.class);
+                intent.putExtra("reminder_id", reminder.getId());
+                startActivity(intent);
+            });
+
+            // Handle completion (Double tap or long press for simulation)
+            holder.itemView.setOnLongClickListener(v -> {
+                new androidx.appcompat.app.AlertDialog.Builder(DashboardActivity.this)
+                        .setTitle("Mark as Completed?")
+                        .setMessage("Do you want to mark this reminder as finished?")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            reminder.setCompleted(true);
+                            new Thread(() -> {
+                                db.reminderDao().update(reminder);
+                                runOnUiThread(() -> {
+                                    Toast.makeText(DashboardActivity.this, "Reminder finished!", Toast.LENGTH_SHORT).show();
+                                    loadReminders();
+                                });
+                            }).start();
+                        })
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return reminders == null ? 0 : reminders.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvContent, tvSubtext;
+            ImageView ivPriority;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                tvContent = itemView.findViewById(R.id.tvItemContent);
+                tvSubtext = itemView.findViewById(R.id.tvItemSubtext);
+                ivPriority = itemView.findViewById(R.id.ivPriorityIcon);
+            }
+        }
     }
 }

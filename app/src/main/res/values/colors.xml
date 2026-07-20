@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="luxury_purple">#9B6BB3</color>
-    <color name="cream_bg">#FFFDD0</color>
-    <color name="date_blue">#9B6BB3</color> <!-- Unified with purple -->
-    <color name="background_gray">#FFFDD0</color> <!-- Using cream -->
-    <color name="text_gray">#4A4A4A</color>
+    <!-- Deep Space & Lavender Palette -->
+    <color name="app_background">#0F0F11</color>
+    <color name="card_background">#18181B</color>
+    <color name="luxury_lavender">#C084FC</color>
+    <color name="on_lavender">#3B0764</color>
+    <color name="main_text">#FAFAFA</color>
+    <color name="secondary_text">#71717A</color>
+    <color name="error_rose">#FB7185</color>
+    <color name="white">#FFFFFF</color>
 
-    <color name="app_background">#FFFDD0</color> <!-- Cream -->
-    <color name="card_background">#FFFFFF</color> <!-- White -->
-    <color name="main_text">#FF000000</color> <!-- Black -->
-    <color name="secondary_text">#4A4A4A</color>
+    <!-- Semantic Aliases for backward compatibility/consistency -->
+    <color name="luxury_purple">@color/luxury_lavender</color>
+    <color name="cream_bg">@color/app_background</color>
+    <color name="date_blue">@color/luxury_lavender</color>
+    <color name="background_gray">@color/app_background</color>
+    <color name="text_gray">@color/secondary_text</color>
+    <color name="subtext_color">@color/secondary_text</color>
+    <color name="black">#FF000000</color>
 </resources>

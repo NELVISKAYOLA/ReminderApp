@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background">
+    android:background="@color/app_background"
+    tools:openDrawer="start">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:layout_height="match_parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Profile"
-            app:titleTextColor="@color/main_text" />
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            app:elevation="0dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:title="Profile"
+                app:titleTextColor="@color/main_text"
+                app:navigationIcon="@drawable/ic_arrow_back" /> <!-- Added back arrow -->
+        </com.google.android.material.appbar.AppBarLayout>
 
-        <ScrollView
+        <!-- Use NestedScrollView for proper scrolling with RecyclerView -->
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="100dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -34,100 +42,63 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Profile Picture Section -->
-                <RelativeLayout
+                <!-- 1. Upgraded Profile Picture with ShapeableImageView -->
+                <FrameLayout
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_gravity="center"
                     android:layout_marginBottom="24dp">
 
-                    <ImageView
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/ivProfilePicture"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/ic_profile"
                         android:scaleType="centerCrop"
-                        android:background="@drawable/ic_launcher_background"
-                        android:clipToOutline="true" />
+                        android:src="@drawable/ic_profile"
+                        app:shapeAppearanceOverlay="@style/CircleImageView" />
 
                     <com.google.android.material.floatingactionbutton.FloatingActionButton
                         android:id="@+id/btnEditPicture"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentEnd="true"
+                        android:layout_gravity="bottom|end"
                         app:fabSize="mini"
-                        app:srcCompat="@android:drawable/ic_menu_camera"
+                        app:srcCompat="@drawable/ic_camera"
                         app:backgroundTint="@color/luxury_purple"
                         app:tint="@color/white"
                         android:contentDescription="Change Picture" />
-                </RelativeLayout>
+                </FrameLayout>
 
+                <!-- User Info -->
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Name" android:textColor="@color/main_text" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:id="@+id/tvProfileName" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="John Doe" android:textColor="@color/main_text" android:textSize="18sp" android:layout_marginBottom="16dp" />
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Phone Number" android:textColor="@color/main_text" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:id="@+id/tvProfilePhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="+1 234 567 890" android:textColor="@color/main_text" android:textSize="18sp" android:layout_marginBottom="16dp" />
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Email" android:textColor="@color/main_text" android:textSize="14sp" android:textStyle="bold" />
+                <TextView android:id="@+id/tvProfileEmail" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="john.doe@example.com" android:textColor="@color/main_text" android:textSize="18sp" android:layout_marginBottom="24dp" />
+
+                <!-- 2. Upgraded History Section -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"
-                    android:textColor="@color/main_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/tvProfileName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="..."
-                    android:textColor="@color/main_text"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Phone Number"
-                    android:textColor="@color/main_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/tvProfilePhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="..."
-                    android:textColor="@color/main_text"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Email"
-                    android:textColor="@color/main_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/tvProfileEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="..."
-                    android:textColor="@color/main_text"
-                    android:textSize="18sp"
-                    android:layout_marginBottom="16dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="History"
+                    android:text="Recent Activity"
                     android:textColor="@color/main_text"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="12dp" />
 
-                <ListView
-                    android:id="@+id/lvHistory"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvHistory"
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="8dp"
-                    android:layout_marginBottom="32dp"/>
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="24dp"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_history" />
 
+                <!-- Settings -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -140,11 +111,10 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="12dp"
+                    app:cardCornerRadius="16dp"
                     app:cardElevation="2dp"
                     app:strokeWidth="0dp"
-                    app:cardBackgroundColor="@color/card_background"
-                    android:layout_marginBottom="100dp">
+                    app:cardBackgroundColor="@color/card_background">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -165,53 +135,68 @@
                             android:layout_height="1dp"
                             android:background="@color/main_text"
                             android:alpha="0.1"
-                            android:layout_marginVertical="8dp"/>
+                            android:layout_marginVertical="12dp"/>
 
-                        <TextView
-                            android:id="@+id/tvLogout"
+                        <!-- 3. Upgraded Logout to MaterialButton -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnLogout"
+                            style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Logout"
                             android:textColor="#FF3B30"
-                            android:textSize="16sp"
-                            android:paddingVertical="8dp" />
+                            app:icon="@drawable/ic_logout"
+                            app:iconTint="#FF3B30"
+                            app:iconGravity="textStart"
+                            android:gravity="start|center_vertical"
+                            android:contentDescription="Logout from account" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:backgroundTint="@color/card_background"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="30dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
+        <!-- Bottom App Bar & FAB (Unchanged, looks great) -->
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            app:backgroundTint="@color/card_background"
+            app:fabAlignmentMode="center"
+            app:fabCradleMargin="10dp"
+            app:fabCradleRoundedCornerRadius="30dp">
 
-    </com.google.android.material.bottomappbar.BottomAppBar>
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigation"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                app:elevation="0dp"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/bottom_nav_menu" />
+        </com.google.android.material.bottomappbar.BottomAppBar>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add"
+            app:backgroundTint="@color/luxury_purple"
+            app:layout_anchor="@id/bottomAppBar"
+            app:tint="@color/white"
+            android:contentDescription="Add New Reminder" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/luxury_purple"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="@color/white"
-        android:contentDescription="Add New Reminder" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/drawer_menu"
+        app:headerLayout="@layout/nav_header"
+        android:background="@color/cream_bg" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

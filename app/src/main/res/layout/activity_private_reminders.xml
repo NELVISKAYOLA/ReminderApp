@@ -38,30 +38,52 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="visible"
+            android:padding="32dp">
 
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@android:drawable/ic_lock_idle_lock"
-                app:tint="@color/luxury_purple" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:cardCornerRadius="60dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/card_background"
+                android:layout_marginBottom="24dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_lock"
+                    android:padding="32dp"
+                    android:contentDescription="Lock icon"
+                    app:tint="@color/luxury_purple" />
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Authentication Required"
-                android:textColor="@color/black"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:text="@string/auth_required"
+                android:textColor="@color/main_text"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
-            <Button
-                android:id="@+id/btnAuthenticate"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:text="Unlock"
-                android:backgroundTint="@color/luxury_purple" />
+                android:text="Your secure reminders are hidden for your privacy."
+                android:textColor="@color/subtext_color"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:layout_marginBottom="32dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAuthenticate"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/btn_unlock"
+                app:cornerRadius="16dp"
+                android:backgroundTint="@color/luxury_purple"
+                android:textColor="@color/white" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

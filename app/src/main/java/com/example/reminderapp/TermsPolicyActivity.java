@@ -31,9 +31,6 @@ public class TermsPolicyActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (NavigationHelper.handleOptionsMenu(this, item)) {
-            return true;
-        }
         return super.onOptionsItemSelected(item);
     }
 }

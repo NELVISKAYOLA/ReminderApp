@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ReminderApp</string>
-    <string name="title_home">Home</string>
+    <string name="title_home">Today</string>
+    <string name="title_todays_event">Todays event</string>
     <string name="title_calendar">Calendar</string>
     <string name="title_insights">Insights</string>
     <string name="title_profile">Profile</string>
@@ -9,4 +10,69 @@
     <string name="menu_privacy">Privacy Policy</string>
     <string name="menu_terms">Terms and Policy</string>
     <string name="menu_theme">Theme</string>
+    <string name="title_today">Today</string>
+    <string name="menu_app_setting">Settings</string>
+    <string name="menu_private_reminders">Private Vault</string>
+    <string name="menu_other_reminders">Productivity Insights</string>
+    <string name="hint_search">Search reminders...</string>
+    <string name="content_desc_search">Search reminders</string>
+    <string name="title_reminders">Your Reminders</string>
+    <string name="empty_state_title">You\'re all caught up!</string>
+    <string name="empty_state_subtitle">Tap the + button to add a new reminder.</string>
+    <string name="content_desc_empty_state">Illustration of an empty list</string>
+    <string name="content_desc_add_reminder">Add New Reminder</string>
+    <string name="content_desc_profile">Profile icon</string>
+    <string name="label_private">Locked Reminder</string>
+    <string name="label_private_switch">Private Vault Only</string>
+    <string name="label_private_desc">If enabled, this reminder will only be visible in your Private Vault and requires authentication.</string>
+    <string name="menu_about">About &amp; Help</string>
+    <string name="auth_title">Unlock Private Vault</string>
+    <string name="auth_subtitle">Use biometric authentication to access your secure reminders</string>
+    <string name="auth_negative_text">Cancel</string>
+    <string name="auth_required">Security Check Required</string>
+    <string name="btn_unlock">Unlock Vault</string>
+
+    <!-- Settings -->
+    <string name="settings_notifications_title">Notifications</string>
+    <string name="settings_notifications_summary">Manage how you receive alerts</string>
+    <string name="settings_theme_title">Appearance</string>
+    <string name="settings_theme_summary">Switch between Light and Dark mode</string>
+    <string name="settings_about_title">About ReminderApp</string>
+    <string name="settings_about_summary">Version, Privacy Policy and Terms</string>
+    <string name="settings_feedback_title">Send Feedback</string>
+    <string name="settings_feedback_summary">Help us improve your experience</string>
+
+    <!-- About -->
+    <string name="about_version">Version 1.0.0</string>
+    <string name="about_description">ReminderApp is your ultimate companion for staying organized and productive. Designed with simplicity and security in mind.</string>
+    <string name="about_copyright">© 2024 ReminderApp Team</string>
+
+    <!-- Feedback -->
+    <string name="feedback_hint">Tell us what you think...</string>
+    <string name="feedback_success">Thank you! Your feedback helps us grow.</string>
+
+    <!-- Network Check -->
+    <string name="error_no_internet_title">No Internet Connection</string>
+    <string name="error_no_internet_msg">ReminderApp requires an active internet connection to function. Please check your Wi-Fi or Mobile Data and try again.</string>
+    <string name="btn_try_again">Try Again</string>
+    <string name="btn_exit">Exit</string>
+
+    <!-- Reset Password -->
+    <string name="title_reset_password">Reset Password</string>
+    <string name="reset_identify_title">Identify Yourself</string>
+    <string name="reset_identify_msg">Please provide your registered email and phone number to reset your password.</string>
+    <string name="hint_reset_email">Registered Email</string>
+    <string name="hint_reset_phone">Registered Phone</string>
+    <string name="reset_new_pass_title">Set New Password</string>
+    <string name="hint_new_password">New Password</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+    <string name="btn_verify_identity">Verify Identity</string>
+    <string name="btn_reset_password">Reset Password</string>
+    <string name="msg_identity_verified">Identity Verified!</string>
+    <string name="msg_reset_success">Password reset successful! Please login.</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_title_main">REMINDER</string>
+    <string name="splash_title_sub">APP</string>
+    <string name="splash_subtitle">Elevate your productivity</string>
 </resources>

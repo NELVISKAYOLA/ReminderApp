@@ -61,6 +61,10 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
 
+        findViewById(R.id.tvForgotPassword).setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, ResetPasswordActivity.class));
+        });
+
         findViewById(R.id.btnGoogleLogin).setOnClickListener(v -> 
             Toast.makeText(this, "Login with Google (Simulation)", Toast.LENGTH_SHORT).show());
             

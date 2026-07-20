@@ -15,8 +15,13 @@ public class FeedbackActivity extends AppCompatActivity {
 
         Button btnSubmit = findViewById(R.id.btnSubmitFeedback);
         btnSubmit.setOnClickListener(v -> {
-            Toast.makeText(this, "Thank you for your feedback!", Toast.LENGTH_SHORT).show();
-            finish();
+            String feedback = ((EditText)findViewById(R.id.etFeedback)).getText().toString().trim();
+            if (feedback.isEmpty()) {
+                Toast.makeText(this, "Please enter your feedback", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, getString(R.string.feedback_success), Toast.LENGTH_LONG).show();
+                finish();
+            }
         });
     }
 }
