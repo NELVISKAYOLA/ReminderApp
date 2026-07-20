@@ -41,24 +41,28 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             AppDatabase db = AppDatabase.getInstance(this);
-            if (db.userDao().getUserByEmail(email) != null) {
-                Toast.makeText(this, "Email already registered!", Toast.LENGTH_SHORT).show();
-                return;
-            }
+            new Thread(() -> {
+                if (db.userDao().getUserByEmail(email) != null) {
+                    runOnUiThread(() -> Toast.makeText(this, "Email already registered!", Toast.LENGTH_SHORT).show());
+                    return;
+                }
 
-            User user = new User(name, email, phone, password);
-            db.userDao().insert(user);
+                User user = new User(name, email, phone, password);
+                db.userDao().insert(user);
 
-            // Mark as registered for Splash screen check
-            SharedPreferences prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-            prefs.edit().putBoolean("is_registered", true).apply();
+                runOnUiThread(() -> {
+                    // Mark as registered for Splash screen check
+                    SharedPreferences prefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                    prefs.edit().putBoolean("is_registered", true).apply();
 
-            // Notify user and send to Login
-            Toast.makeText(this, "Registration successful! Please login.", Toast.LENGTH_SHORT).show();
-            
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+                    // Notify user and send to Login
+                    Toast.makeText(this, "Registration successful! Please login.", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                });
+            }).start();
         });
 
         tvBackToLogin.setOnClickListener(v -> finish());

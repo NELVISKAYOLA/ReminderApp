@@ -27,11 +27,15 @@ import java.util.stream.Collectors;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private RecyclerView rvReminders;
+    private RecyclerView rvReminders, rvRecentReminders;
     private View emptyStateLayout;
     private AppDatabase db;
     private int activeUserId;
-    private ReminderAdapter adapter;
+    private ReminderAdapter adapter, recentAdapter;
+
+    private TextView tvFullDate, tvReminderSummary, tvRecentHeader;
+    private android.widget.EditText etSearch;
+    private List<ReminderEntity> currentTodaysReminders = new java.util.ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +52,56 @@ public class DashboardActivity extends AppCompatActivity {
         activeUserId = prefs.getInt("active_user_id", -1);
 
         rvReminders = findViewById(R.id.rv_reminders);
+        rvRecentReminders = findViewById(R.id.rv_recent_reminders);
         emptyStateLayout = findViewById(R.id.empty_state_layout);
+        tvFullDate = findViewById(R.id.tv_full_date);
+        tvReminderSummary = findViewById(R.id.tv_reminder_summary);
+        tvRecentHeader = findViewById(R.id.tv_recent_header);
+        etSearch = findViewById(R.id.etSearch);
         
         rvReminders.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ReminderAdapter();
         rvReminders.setAdapter(adapter);
 
+        rvRecentReminders.setLayoutManager(new LinearLayoutManager(this));
+        recentAdapter = new ReminderAdapter();
+        rvRecentReminders.setAdapter(recentAdapter);
+
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
             Intent intent = new Intent(DashboardActivity.this, AddeventActivity.class);
             startActivity(intent);
         });
+
+        updateDateHeader();
+
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterReminders(s.toString());
+            }
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+    }
+
+    private void filterReminders(String query) {
+        if (query.isEmpty()) {
+            adapter.setReminders(currentTodaysReminders);
+            return;
+        }
+        List<ReminderEntity> filtered = currentTodaysReminders.stream()
+                .filter(r -> r.getTitle().toLowerCase().contains(query.toLowerCase()) || 
+                             (r.getNotes() != null && r.getNotes().toLowerCase().contains(query.toLowerCase())))
+                .collect(Collectors.toList());
+        adapter.setReminders(filtered);
+    }
+
+    private void updateDateHeader() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, d MMMM", Locale.getDefault());
+        tvFullDate.setText(sdf.format(calendar.getTime()));
     }
 
     @Override
@@ -73,19 +117,37 @@ public class DashboardActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String todayStr = sdf.format(calendar.getTime());
 
-        List<ReminderEntity> allReminders = db.reminderDao().getPublicRemindersForUser(activeUserId);
-        List<ReminderEntity> todaysReminders = allReminders.stream()
-                .filter(r -> r.getDate().equals(todayStr) && !r.isCompleted())
-                .collect(Collectors.toList());
-        
-        if (todaysReminders.isEmpty()) {
-            rvReminders.setVisibility(View.GONE);
-            emptyStateLayout.setVisibility(View.VISIBLE);
-        } else {
-            rvReminders.setVisibility(View.VISIBLE);
-            emptyStateLayout.setVisibility(View.GONE);
-            adapter.setReminders(todaysReminders);
-        }
+        new Thread(() -> {
+            List<ReminderEntity> allPublicReminders = db.reminderDao().getPublicRemindersForUser(activeUserId);
+            currentTodaysReminders = allPublicReminders.stream()
+                    .filter(r -> r.getDate().equals(todayStr) && !r.isCompleted())
+                    .collect(Collectors.toList());
+
+            List<ReminderEntity> recentCompleted = db.reminderDao().getRecentCompletedReminders(activeUserId);
+
+            runOnUiThread(() -> {
+                if (currentTodaysReminders.isEmpty()) {
+                    rvReminders.setVisibility(View.GONE);
+                    emptyStateLayout.setVisibility(View.VISIBLE);
+                    tvReminderSummary.setText("You are all caught up!");
+                } else {
+                    rvReminders.setVisibility(View.VISIBLE);
+                    emptyStateLayout.setVisibility(View.GONE);
+                    adapter.setReminders(currentTodaysReminders);
+                    String taskWord = currentTodaysReminders.size() == 1 ? "task" : "tasks";
+                    tvReminderSummary.setText("You have " + currentTodaysReminders.size() + " " + taskWord + " for today");
+                }
+
+                if (recentCompleted.isEmpty()) {
+                    tvRecentHeader.setVisibility(View.GONE);
+                    rvRecentReminders.setVisibility(View.GONE);
+                } else {
+                    tvRecentHeader.setVisibility(View.VISIBLE);
+                    rvRecentReminders.setVisibility(View.VISIBLE);
+                    recentAdapter.setReminders(recentCompleted);
+                }
+            });
+        }).start();
     }
 
     private class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ViewHolder> {
@@ -107,7 +169,16 @@ public class DashboardActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             ReminderEntity reminder = reminders.get(position);
             holder.tvContent.setText(reminder.getTitle());
-            holder.tvSubtext.setText(reminder.getTime() + (reminder.getDuration().isEmpty() ? "" : " • " + reminder.getDuration()));
+            
+            String timeText = reminder.getTime() + (reminder.getDuration().isEmpty() ? "" : " • " + reminder.getDuration());
+            if (reminder.isOverdue()) {
+                holder.tvContent.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                timeText = "OVERDUE • " + timeText;
+            } else {
+                holder.tvContent.setTextColor(getResources().getColor(R.color.main_text));
+            }
+            
+            holder.tvSubtext.setText(timeText);
             holder.tvSubtext.setVisibility(View.VISIBLE);
             
             if (reminder.getPriority().equalsIgnoreCase("Urgent") || reminder.getPriority().equalsIgnoreCase("High")) {
@@ -123,24 +194,28 @@ public class DashboardActivity extends AppCompatActivity {
             });
 
             // Handle completion (Double tap or long press for simulation)
-            holder.itemView.setOnLongClickListener(v -> {
-                new androidx.appcompat.app.AlertDialog.Builder(DashboardActivity.this)
-                        .setTitle("Mark as Completed?")
-                        .setMessage("Do you want to mark this reminder as finished?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            reminder.setCompleted(true);
-                            new Thread(() -> {
-                                db.reminderDao().update(reminder);
-                                runOnUiThread(() -> {
-                                    Toast.makeText(DashboardActivity.this, "Reminder finished!", Toast.LENGTH_SHORT).show();
-                                    loadReminders();
-                                });
-                            }).start();
-                        })
-                        .setNegativeButton("No", null)
-                        .show();
-                return true;
-            });
+            if (!reminder.isCompleted()) {
+                holder.itemView.setOnLongClickListener(v -> {
+                    new androidx.appcompat.app.AlertDialog.Builder(DashboardActivity.this)
+                            .setTitle("Mark as Completed?")
+                            .setMessage("Do you want to mark this reminder as finished?")
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                reminder.setCompleted(true);
+                                new Thread(() -> {
+                                    db.reminderDao().update(reminder);
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(DashboardActivity.this, "Reminder finished!", Toast.LENGTH_SHORT).show();
+                                        loadReminders();
+                                    });
+                                }).start();
+                            })
+                            .setNegativeButton("No", null)
+                            .show();
+                    return true;
+                });
+            } else {
+                holder.itemView.setOnLongClickListener(null);
+            }
         }
 
         @Override

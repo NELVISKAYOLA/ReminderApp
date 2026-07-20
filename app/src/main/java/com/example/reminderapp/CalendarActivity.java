@@ -18,15 +18,13 @@ import com.example.reminderapp.database.ReminderEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CalendarActivity extends AppCompatActivity {
 
     private RecyclerView rvDayReminders;
-    private TextView tvSelectedDate;
+    private TextView tvSelectedDate, tvEmptyState;
     private AppDatabase db;
     private int activeUserId;
-    private List<ReminderEntity> allReminders = new ArrayList<>();
     private CalendarAdapter adapter;
 
     @Override
@@ -40,35 +38,46 @@ public class CalendarActivity extends AppCompatActivity {
 
         CalendarView calendarView = findViewById(R.id.calendarView);
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
+        tvEmptyState = findViewById(R.id.tvEmptyState);
         rvDayReminders = findViewById(R.id.rvDayReminders);
 
         rvDayReminders.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CalendarAdapter();
         rvDayReminders.setAdapter(adapter);
 
-        loadAllReminders();
+        // Initial date
+        long currentMillis = calendarView.getDate();
+        java.util.Calendar initialCal = java.util.Calendar.getInstance();
+        initialCal.setTimeInMillis(currentMillis);
+        String initialDate = String.format("%04d-%02d-%02d", initialCal.get(java.util.Calendar.YEAR), 
+                initialCal.get(java.util.Calendar.MONTH) + 1, initialCal.get(java.util.Calendar.DAY_OF_MONTH));
+        tvSelectedDate.setText("Events for: " + initialDate);
+        showRemindersForDate(initialDate);
 
         calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            // Standardize format to YYYY-MM-DD
             String date = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth);
             tvSelectedDate.setText("Events for: " + date);
             showRemindersForDate(date);
         });
     }
 
-    private void loadAllReminders() {
-        if (activeUserId != -1) {
-            // Only show public reminders on the public calendar
-            allReminders = db.reminderDao().getPublicRemindersForUser(activeUserId);
-        }
-    }
-
     private void showRemindersForDate(String date) {
-        List<ReminderEntity> dayReminders = allReminders.stream()
-                .filter(r -> r.getDate().equals(date))
-                .collect(Collectors.toList());
-
-        adapter.setReminders(dayReminders);
+        if (activeUserId == -1) return;
+        
+        new Thread(() -> {
+            List<ReminderEntity> dayReminders = db.reminderDao().getPublicRemindersForDate(activeUserId, date);
+            
+            runOnUiThread(() -> {
+                adapter.setReminders(dayReminders);
+                if (dayReminders.isEmpty()) {
+                    rvDayReminders.setVisibility(View.GONE);
+                    tvEmptyState.setVisibility(View.VISIBLE);
+                } else {
+                    rvDayReminders.setVisibility(View.VISIBLE);
+                    tvEmptyState.setVisibility(View.GONE);
+                }
+            });
+        }).start();
     }
 
     @Override

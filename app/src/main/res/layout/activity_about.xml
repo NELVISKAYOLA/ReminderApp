@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="@string/menu_about"
+            app:title="About ReminderApp"
             app:titleTextColor="@color/main_text"
             app:navigationIcon="@drawable/ic_arrow_back" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -29,69 +29,97 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp"
+            android:padding="32dp"
             android:gravity="center_horizontal">
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@mipmap/ic_launcher"
-                android:layout_marginBottom="16dp" />
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@color/card_background"
+                android:layout_marginBottom="24dp">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="24dp"
+                    android:src="@mipmap/ic_launcher"
+                    android:scaleType="centerInside" />
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/app_name"
+                android:text="ReminderApp"
                 android:textColor="@color/main_text"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.02" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/about_version"
-                android:textColor="@color/subtext_color"
+                android:text="Version 1.0.0 Gold"
+                android:textColor="@color/luxury_purple"
                 android:textSize="14sp"
-                android:layout_marginBottom="24dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/about_description"
-                android:textColor="@color/main_text"
-                android:textSize="16sp"
-                android:gravity="center"
-                android:lineSpacingExtra="4dp"
+                android:textStyle="bold"
                 android:layout_marginBottom="32dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPrivacyPolicy"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/menu_privacy"
-                android:textColor="@color/luxury_purple" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnTerms"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/menu_terms"
-                android:textColor="@color/luxury_purple" />
-
-            <View
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:minHeight="48dp" />
+                android:layout_height="wrap_content"
+                android:text="A sophisticated companion for your daily productivity. Designed for those who value elegance and precision in their scheduling."
+                android:textColor="@color/secondary_text"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:lineSpacingExtra="6dp"
+                android:layout_marginBottom="40dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                app:dividerColor="@color/card_background" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPrivacyPolicy"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Privacy"
+                    android:textColor="@color/secondary_text" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="•"
+                    android:textColor="@color/card_background"
+                    android:layout_marginHorizontal="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTerms"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Terms"
+                    android:textColor="@color/secondary_text" />
+
+            </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/about_copyright"
-                android:textColor="@color/subtext_color"
-                android:textSize="12sp" />
+                android:layout_marginTop="16dp"
+                android:text="© 2025 Luxury Schedulers"
+                android:textColor="@color/secondary_text"
+                android:textSize="12sp"
+                android:alpha="0.6" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

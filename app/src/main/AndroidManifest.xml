@@ -5,15 +5,21 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -25,6 +31,9 @@
         android:theme="@style/Theme.ReminderApp">
         <activity
             android:name=".SplashActivity"
+            android:exported="true" />
+        <activity
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,8 +41,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
         <activity android:name=".DashboardActivity" />
+        <activity android:name=".MainActivity" />
         <activity android:name=".AddeventActivity" />
         <activity android:name=".TermsPolicyActivity" />
         <activity android:name=".ThemeActivity" />
@@ -48,12 +57,23 @@
         <activity android:name=".PrivateRemindersActivity" />
         <activity android:name=".AppSettingsActivity" />
         <activity android:name=".AboutActivity" />
+        <activity android:name=".AdminDashboardActivity" />
+        <activity android:name=".AdminSupportActivity" />
+        <activity android:name=".AdminChatActivity" />
+        <activity android:name=".HelpActivity" />
         <activity android:name=".ResetPasswordActivity" /><activity android:name=".AlarmRingingActivity"         android:showOnLockScreen="true"
             android:screenOrientation="portrait"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.ReminderApp" />
 
         <receiver android:name=".AlarmReceiver" android:enabled="true" android:exported="false" />
+        <receiver android:name=".CallReminderReceiver" android:enabled="true" android:exported="false">
+            <intent-filter>
+                <action android:name="com.example.reminderapp.ACTION_NORMAL_CALL" />
+                <action android:name="com.example.reminderapp.ACTION_ONLINE_CALL" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

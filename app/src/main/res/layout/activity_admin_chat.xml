@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background">
@@ -16,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Customer Support"
+            app:title="Replying to User"
             app:titleTextColor="@color/main_text"
             app:navigationIcon="@drawable/ic_arrow_back" />
     </com.google.android.material.appbar.AppBarLayout>
@@ -26,9 +25,8 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Chat History -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvFeedbackChat"
+            android:id="@+id/rvAdminChat"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:padding="16dp"
@@ -36,7 +34,6 @@
             app:layout_constraintBottom_toTopOf="@+id/inputArea"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Input Area -->
         <LinearLayout
             android:id="@+id/inputArea"
             android:layout_width="match_parent"
@@ -56,10 +53,10 @@
                 app:hintEnabled="false">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFeedbackInput"
+                    android:id="@+id/etAdminChatInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Type your message..."
+                    android:hint="Type your response..."
                     android:background="@android:color/transparent"
                     android:padding="12dp"
                     android:maxLines="4"
@@ -67,7 +64,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSendFeedback"
+                android:id="@+id/btnAdminSend"
                 style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="48dp"
                 android:layout_height="48dp"

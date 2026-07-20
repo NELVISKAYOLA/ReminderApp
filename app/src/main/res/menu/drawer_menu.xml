@@ -13,15 +13,27 @@
         android:icon="@android:drawable/ic_lock_idle_lock"
         android:title="@string/menu_private_reminders" />
     <item
-        android:id="@+id/nav_other_reminders"
+        android:id="@+id/nav_insights"
         android:icon="@drawable/ic_insights"
-        android:title="@string/menu_other_reminders" />
+        android:title="Activity Insights" />
 
-    <item android:title="@string/menu_about">
+    <item
+        android:id="@+id/nav_admin_console"
+        android:icon="@drawable/ic_settings"
+        android:title="Admin Console"
+        android:visible="false" />
+
+    <item android:title="Support &amp; Legal">
         <menu>
             <item
+                android:id="@+id/nav_help"
+                android:title="Help &amp; Support" />
+            <item
                 android:id="@+id/nav_feedback"
-                android:title="@string/menu_feedback" />
+                android:title="User Feedback" />
+            <item
+                android:id="@+id/nav_about"
+                android:title="About" />
             <item
                 android:id="@+id/nav_privacy"
                 android:title="@string/menu_privacy" />

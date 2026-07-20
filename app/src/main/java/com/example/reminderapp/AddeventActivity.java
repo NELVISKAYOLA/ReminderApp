@@ -163,6 +163,7 @@ public class AddeventActivity extends AppCompatActivity {
         }
 
         ReminderEntity reminder = new ReminderEntity(activeUserId, title, notes, date, time, duration, repeat, priority, isPrivate);
+        reminder.setDateTime(selectedDateTime.getTimeInMillis());
         if (editReminderId != -1) {
             reminder.setId(editReminderId);
             db.reminderDao().update(reminder);

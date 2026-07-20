@@ -8,7 +8,7 @@
     <string name="title_search">Search</string>
     <string name="menu_feedback">User Feedback</string>
     <string name="menu_privacy">Privacy Policy</string>
-    <string name="menu_terms">Terms and Policy</string>
+    <string name="menu_terms">Terms and Conditions</string>
     <string name="menu_theme">Theme</string>
     <string name="title_today">Today</string>
     <string name="menu_app_setting">Settings</string>
@@ -75,4 +75,6 @@
     <string name="splash_title_main">REMINDER</string>
     <string name="splash_title_sub">APP</string>
     <string name="splash_subtitle">Elevate your productivity</string>
+    <string name="title_recent_finished">Recently Finished</string>
+    <string name="msg_no_reminders_day">No reminders for this day</string>
 </resources>

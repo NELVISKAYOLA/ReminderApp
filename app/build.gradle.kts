@@ -1,5 +1,6 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kspPlugin)
 }
 
 android {
@@ -29,10 +30,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
     implementation(libs.activity.ktx)
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)
     implementation(libs.material)
@@ -40,7 +46,7 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.biometric)
-    annotationProcessor(libs.room.compiler)
+    ksp(libs.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)

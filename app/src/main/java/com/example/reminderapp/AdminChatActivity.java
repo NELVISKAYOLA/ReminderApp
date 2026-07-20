@@ -1,6 +1,5 @@
 package com.example.reminderapp;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -8,15 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.reminderapp.database.AppDatabase;
 import com.example.reminderapp.database.FeedbackEntity;
+import com.example.reminderapp.database.User;
 import com.google.android.material.card.MaterialCardView;
 
 import java.text.SimpleDateFormat;
@@ -25,34 +25,47 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class FeedbackActivity extends AppCompatActivity {
+public class AdminChatActivity extends AppCompatActivity {
     private RecyclerView rvChat;
     private ChatAdapter adapter;
     private AppDatabase db;
-    private int activeUserId;
+    private int targetUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feedback);
-        
-        db = AppDatabase.getInstance(this);
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        activeUserId = prefs.getInt("active_user_id", -1);
+        setContentView(R.layout.activity_admin_chat);
 
-        rvChat = findViewById(R.id.rvFeedbackChat);
+        db = AppDatabase.getInstance(this);
+        targetUserId = getIntent().getIntExtra("target_user_id", -1);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        rvChat = findViewById(R.id.rvAdminChat);
         rvChat.setLayoutManager(new LinearLayoutManager(this));
         adapter = new ChatAdapter();
         rvChat.setAdapter(adapter);
 
-        findViewById(R.id.btnSendFeedback).setOnClickListener(v -> {
-            TextView input = findViewById(R.id.etFeedbackInput);
+        // Load user name for toolbar title
+        new Thread(() -> {
+            User user = db.userDao().getUserById(targetUserId);
+            if (user != null) {
+                runOnUiThread(() -> getSupportActionBar().setTitle("Replying to " + user.getName()));
+            }
+        }).start();
+
+        findViewById(R.id.btnAdminSend).setOnClickListener(v -> {
+            TextView input = findViewById(R.id.etAdminChatInput);
             String message = input.getText().toString().trim();
-            if (!message.isEmpty() && activeUserId != -1) {
-                FeedbackEntity feedback = new FeedbackEntity(0, activeUserId, message, "USER", System.currentTimeMillis(), false);
+            if (!message.isEmpty() && targetUserId != -1) {
+                FeedbackEntity feedback = new FeedbackEntity(0, targetUserId, message, "SUPPLIER", System.currentTimeMillis(), false);
                 new Thread(() -> {
                     db.feedbackDao().insert(feedback);
-                    
                     runOnUiThread(() -> {
                         input.setText("");
                         loadMessages();
@@ -65,10 +78,9 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     private void loadMessages() {
-        if (activeUserId == -1) return;
+        if (targetUserId == -1) return;
         new Thread(() -> {
-            List<FeedbackEntity> messages = db.feedbackDao().getFeedbackForUser(activeUserId);
-            db.feedbackDao().markSupplierRepliesAsRead(activeUserId);
+            List<FeedbackEntity> messages = db.feedbackDao().getFeedbackHistory(targetUserId);
             runOnUiThread(() -> {
                 adapter.setMessages(messages);
                 if (messages.size() > 0) {
@@ -104,7 +116,7 @@ public class FeedbackActivity extends AppCompatActivity {
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.card.getLayoutParams();
             LinearLayout.LayoutParams timeParams = (LinearLayout.LayoutParams) holder.tvTimestamp.getLayoutParams();
             
-            if (msg.getSenderType().equals("USER")) {
+            if (msg.getSenderType().equals("SUPPLIER")) {
                 params.gravity = Gravity.END;
                 timeParams.gravity = Gravity.END;
                 holder.card.setCardBackgroundColor(getResources().getColor(R.color.luxury_purple));
