@@ -10,8 +10,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,15 +26,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.reminderapp.database.AppDatabase;
+import com.example.reminderapp.database.ReminderEntity;
 import com.example.reminderapp.database.User;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -87,7 +94,7 @@ public class ProfileActivity extends AppCompatActivity {
         TextView tvName = findViewById(R.id.tvProfileName);
         TextView tvPhone = findViewById(R.id.tvProfilePhone);
         TextView tvEmail = findViewById(R.id.tvProfileEmail);
-        ListView lvHistory = findViewById(R.id.lvHistory);
+        RecyclerView rvHistory = findViewById(R.id.rvHistory);
         FloatingActionButton btnEditPicture = findViewById(R.id.btnEditPicture);
 
         // Load active user info
@@ -118,9 +125,9 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         // Logout
-        TextView tvLogout = findViewById(R.id.tvLogout);
-        if (tvLogout != null) {
-            tvLogout.setOnClickListener(v -> {
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        if (btnLogout != null) {
+            btnLogout.setOnClickListener(v -> {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.clear(); // Clear all session data
                 editor.putBoolean("is_logged_in", false);
@@ -132,21 +139,33 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
 
-        // History Setup (Simulation)
-        ArrayList<String> history = new ArrayList<>();
-        history.add("✅ Completed: Gym session (Yesterday)");
-        history.add("✅ Completed: Buy groceries (2 days ago)");
-        history.add("❌ Missed: Drink water (3 days ago)");
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                R.layout.item_card, R.id.tvItemContent, history);
-        if (lvHistory != null) {
-            lvHistory.setAdapter(adapter);
-        }
-
         if (btnEditPicture != null) {
             btnEditPicture.setOnClickListener(v -> checkPermissionsAndShowDialog());
         }
+
+        loadFinishedSessions(userId, rvHistory);
+    }
+
+    private void loadFinishedSessions(int userId, RecyclerView rvHistory) {
+        if (userId == -1 || rvHistory == null) return;
+
+        new Thread(() -> {
+            List<ReminderEntity> finishedReminders = db.reminderDao().getCompletedRemindersForUser(userId);
+            List<String> historyStrings = new ArrayList<>();
+            for (ReminderEntity r : finishedReminders) {
+                historyStrings.add("✅ Finished: " + r.getTitle() + " (" + r.getDate() + ")");
+            }
+            
+            if (historyStrings.isEmpty()) {
+                historyStrings.add("No finished sessions yet.");
+            }
+
+            runOnUiThread(() -> {
+                rvHistory.setLayoutManager(new LinearLayoutManager(this));
+                HistoryAdapter historyAdapter = new HistoryAdapter(historyStrings);
+                rvHistory.setAdapter(historyAdapter);
+            });
+        }).start();
     }
 
     private void checkPermissionsAndShowDialog() {
@@ -197,16 +216,40 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (NavigationHelper.handleOptionsMenu(this, item)) {
-            return true;
+    private class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
+        private final List<String> historyItems;
+
+        public HistoryAdapter(List<String> historyItems) {
+            this.historyItems = historyItems;
         }
-        return super.onOptionsItemSelected(item);
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            holder.tvContent.setText(historyItems.get(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return historyItems.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvContent;
+            ViewHolder(View itemView) {
+                super(itemView);
+                tvContent = itemView.findViewById(R.id.tvItemContent);
+            }
+        }
     }
 }

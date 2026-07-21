@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Reminder Details"
-            app:titleTextColor="@color/main_text" />
-    </com.google.android.material.appbar.AppBarLayout>
+    <include layout="@layout/layout_toolbar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -30,65 +19,126 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Title -->
             <TextView
                 android:id="@+id/tvDetailTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Title"
                 android:textColor="@color/main_text"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="8dp"
+                tools:text="Buy Groceries" />
 
+            <!-- Notes -->
             <TextView
                 android:id="@+id/tvDetailNotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Notes"
-                android:textColor="@color/main_text"
-                android:textSize="18sp"
-                android:layout_marginBottom="24dp" />
+                android:textColor="@color/secondary_text"
+                android:textSize="16sp"
+                android:layout_marginBottom="32dp"
+                tools:text="Pick up milk, eggs, and bread from the store near the office." />
 
-            <TextView
-                android:id="@+id/tvDetailDate"
+            <!-- Metadata Section -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Date: 2024-01-01"
-                android:textColor="@color/main_text"
-                android:layout_marginBottom="8dp" />
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#1AFFFFFF"
+                app:cardBackgroundColor="@color/card_background"
+                android:layout_marginBottom="32dp">
 
-            <TextView
-                android:id="@+id/tvDetailTime"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Time: 12:00"
-                android:textColor="@color/main_text"
-                android:layout_marginBottom="8dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-            <TextView
-                android:id="@+id/tvDetailPriority"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Priority: Work"
-                android:textColor="@color/main_text"
-                android:layout_marginBottom="8dp" />
+                    <!-- Date & Time -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-            <TextView
-                android:id="@+id/tvDetailRepeat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Repeat: None"
-                android:textColor="@color/main_text"
-                android:layout_marginBottom="8dp" />
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_calendar"
+                            app:tint="@color/primary" />
 
-            <TextView
-                android:id="@+id/tvDetailDuration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Duration: 30 mins"
-                android:textColor="@color/main_text"
-                android:layout_marginBottom="32dp" />
+                        <TextView
+                            android:id="@+id/tvDetailDate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:textColor="@color/main_text"
+                            android:textSize="16sp"
+                            tools:text="Monday, Oct 14" />
 
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@android:drawable/ic_lock_idle_alarm"
+                            app:tint="@color/primary" />
+
+                        <TextView
+                            android:id="@+id/tvDetailTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:textColor="@color/main_text"
+                            android:textSize="16sp"
+                            tools:text="09:00 AM" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/divider"
+                        android:alpha="0.2"
+                        android:layout_marginBottom="16dp" />
+
+                    <!-- Priority & Repeat -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_priority"
+                            app:tint="@color/error_rose" />
+
+                        <TextView
+                            android:id="@+id/tvDetailPriority"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="16dp"
+                            android:textColor="@color/main_text"
+                            android:textSize="16sp"
+                            tools:text="High Priority" />
+
+                        <TextView
+                            android:id="@+id/tvDetailRepeat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/secondary_text"
+                            android:textSize="14sp"
+                            tools:text="Repeats: Daily" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Actions -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -96,24 +146,29 @@
                 android:weightSum="2"
                 android:layout_marginBottom="100dp">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDeleteReminder"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Delete"
-                    android:backgroundTint="#FF3B30"
-                    android:textColor="@color/white"
+                    app:icon="@drawable/ic_delete"
+                    app:iconTint="@color/error_rose"
+                    android:textColor="@color/error_rose"
+                    app:strokeColor="@color/error_rose"
                     android:layout_marginEnd="8dp" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnEditReminder"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Edit"
-                    android:backgroundTint="@color/luxury_purple"
-                    android:textColor="@color/white" />
+                    app:icon="@drawable/ic_camera"
+                    app:iconTint="@color/black"
+                    android:backgroundTint="@color/accent"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
         </LinearLayout>
@@ -145,9 +200,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/luxury_purple"
+        app:backgroundTint="@color/accent"
         app:layout_anchor="@id/bottomAppBar"
-        app:tint="@color/white"
+        app:tint="@color/black"
         android:contentDescription="Add New Reminder" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -12,15 +12,20 @@ public class User {
     private String phone;
     private String password;
     private String profileImagePath;
+    private String role; // "USER", "ADMIN", "SUPPLIER"
 
     public User(String name, String email, String phone, String password) {
         this.name = name;
         this.email = email;
         this.phone = phone;
         this.password = password;
+        this.role = "USER";
+        this.profileImagePath = ""; // Initialize to avoid NPE
     }
 
     // Getters and Setters
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public String getName() { return name; }

@@ -1,94 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_background">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+    <include layout="@layout/layout_toolbar" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="User Feedback"
-            app:titleTextColor="@color/main_text" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="24dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="We value your opinion"
-            android:textColor="@color/main_text"
-            android:textSize="18sp"
-            android:layout_marginBottom="16dp" />
+        <!-- Chat History -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFeedbackChat"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="16dp"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toTopOf="@+id/inputArea"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <!-- Input Area -->
+        <LinearLayout
+            android:id="@+id/inputArea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Your Feedback"
-            app:boxStrokeColor="@color/luxury_purple"
-            app:hintTextColor="@color/luxury_purple"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:background="@color/card_background"
+            android:elevation="8dp"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:gravity="top"
-                android:textColor="@color/main_text" />
-        </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
+                app:hintEnabled="false">
 
-        <Button
-            android:id="@+id/btnSubmitFeedback"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Submit"
-            android:backgroundTint="@color/luxury_purple"
-            android:textColor="@color/white"
-            android:layout_marginTop="24dp" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFeedbackInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Type your message..."
+                    android:background="@android:color/transparent"
+                    android:padding="12dp"
+                    android:maxLines="4"
+                    android:textColor="@color/main_text" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSendFeedback"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                app:icon="@drawable/ic_send"
+                app:iconTint="@color/luxury_purple" />
+        </LinearLayout>
 
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:backgroundTint="@color/card_background"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="10dp"
-        app:fabCradleRoundedCornerRadius="30dp">
-
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNavigation"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:elevation="0dp"
-            app:labelVisibilityMode="labeled"
-            app:menu="@menu/bottom_nav_menu" />
-
-    </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/luxury_purple"
-        app:layout_anchor="@id/bottomAppBar"
-        app:tint="@color/white"
-        android:contentDescription="Add New Reminder" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,151 @@
+package com.example.reminderapp;
+
+import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.reminderapp.database.AppDatabase;
+import com.example.reminderapp.database.FeedbackEntity;
+import com.example.reminderapp.database.User;
+import com.google.android.material.card.MaterialCardView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+public class AdminChatActivity extends AppCompatActivity {
+    private RecyclerView rvChat;
+    private ChatAdapter adapter;
+    private AppDatabase db;
+    private int targetUserId;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_admin_chat);
+
+        db = AppDatabase.getInstance(this);
+        targetUserId = getIntent().getIntExtra("target_user_id", -1);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(v -> finish());
+
+        rvChat = findViewById(R.id.rvAdminChat);
+        rvChat.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new ChatAdapter();
+        rvChat.setAdapter(adapter);
+
+        // Load user name for toolbar title
+        new Thread(() -> {
+            User user = db.userDao().getUserById(targetUserId);
+            if (user != null) {
+                runOnUiThread(() -> getSupportActionBar().setTitle("Replying to " + user.getName()));
+            }
+        }).start();
+
+        findViewById(R.id.btnAdminSend).setOnClickListener(v -> {
+            TextView input = findViewById(R.id.etAdminChatInput);
+            String message = input.getText().toString().trim();
+            if (!message.isEmpty() && targetUserId != -1) {
+                FeedbackEntity feedback = new FeedbackEntity(0, targetUserId, message, "SUPPLIER", System.currentTimeMillis(), false);
+                new Thread(() -> {
+                    db.feedbackDao().insert(feedback);
+                    runOnUiThread(() -> {
+                        input.setText("");
+                        loadMessages();
+                    });
+                }).start();
+            }
+        });
+
+        loadMessages();
+    }
+
+    private void loadMessages() {
+        if (targetUserId == -1) return;
+        new Thread(() -> {
+            List<FeedbackEntity> messages = db.feedbackDao().getFeedbackHistory(targetUserId);
+            runOnUiThread(() -> {
+                adapter.setMessages(messages);
+                if (messages.size() > 0) {
+                    rvChat.scrollToPosition(messages.size() - 1);
+                }
+            });
+        }).start();
+    }
+
+    private class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
+        private List<FeedbackEntity> messages = new ArrayList<>();
+
+        public void setMessages(List<FeedbackEntity> messages) {
+            this.messages = messages;
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_feedback_message, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            FeedbackEntity msg = messages.get(position);
+            holder.tvMessage.setText(msg.getMessage());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            holder.tvTimestamp.setText(sdf.format(new Date(msg.getTimestamp())));
+
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.card.getLayoutParams();
+            LinearLayout.LayoutParams timeParams = (LinearLayout.LayoutParams) holder.tvTimestamp.getLayoutParams();
+            
+            if (msg.getSenderType().equals("SUPPLIER")) {
+                params.gravity = Gravity.END;
+                timeParams.gravity = Gravity.END;
+                holder.card.setCardBackgroundColor(getResources().getColor(R.color.luxury_purple));
+                holder.tvMessage.setTextColor(getResources().getColor(R.color.white));
+            } else {
+                params.gravity = Gravity.START;
+                timeParams.gravity = Gravity.START;
+                holder.card.setCardBackgroundColor(getResources().getColor(R.color.card_background));
+                holder.tvMessage.setTextColor(getResources().getColor(R.color.main_text));
+            }
+            holder.card.setLayoutParams(params);
+            holder.tvTimestamp.setLayoutParams(timeParams);
+        }
+
+        @Override
+        public int getItemCount() {
+            return messages.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            TextView tvMessage, tvTimestamp;
+            MaterialCardView card;
+
+            ViewHolder(View itemView) {
+                super(itemView);
+                tvMessage = itemView.findViewById(R.id.tvMessage);
+                tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
+                card = itemView.findViewById(R.id.cardMessage);
+            }
+        }
+    }
+}

@@ -22,34 +22,67 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra("title");
         String notes = intent.getStringExtra("notes");
-        boolean isEarly = intent.getBooleanExtra("is_early", false);
+        String priority = intent.getStringExtra("priority");
+        String time = intent.getStringExtra("time");
+        String duration = intent.getStringExtra("duration");
 
         createNotificationChannel(context);
 
+        // Intent for when user taps the notification
         Intent dashboardIntent = new Intent(context, DashboardActivity.class);
         dashboardIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, dashboardIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), dashboardIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        String displayTitle = isEarly ? "Upcoming: " + title : "Alarm: " + title;
-        String displayText = isEarly ? "Starting soon. " + notes : notes;
+        // Construct a clear, informative notification
+        String notificationTitle = "Reminder: " + title;
+        if ("Urgent".equalsIgnoreCase(priority)) {
+            notificationTitle = "⚠️ URGENT: " + title;
+        }
+
+        StringBuilder detailBuilder = new StringBuilder();
+        if (time != null) detailBuilder.append("Scheduled for ").append(time).append("\n");
+        if (duration != null && !duration.isEmpty()) detailBuilder.append("Duration: ").append(duration).append("\n\n");
+        detailBuilder.append(notes);
+
+        String fullDetails = detailBuilder.toString();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_home)
-                .setContentTitle(displayTitle)
-                .setContentText(displayText)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSmallIcon(R.drawable.ic_calendar)
+                .setContentTitle(notificationTitle)
+                .setContentText(notes) // Brief summary for collapsed view
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(fullDetails)) // Full details when expanded
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
                 .setAutoCancel(true)
-                .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setFullScreenIntent(pendingIntent, true)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(pendingIntent)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (notificationManager != null) {
             notificationManager.notify((int) System.currentTimeMillis(), builder.build());
         }
 
-        // Make it "ring"
-        ringAlarm(context);
+        // Handle Urgent Priority: Full Screen Alarm UI
+        if ("Urgent".equalsIgnoreCase(priority)) {
+            Intent alarmIntent = new Intent(context, AlarmRingingActivity.class);
+            alarmIntent.putExtra("title", title);
+            alarmIntent.putExtra("notes", fullDetails); // Pass the detailed text to the full screen UI
+            alarmIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(alarmIntent);
+        } else {
+            playBriefSound(context);
+        }
+    }
+
+    private void playBriefSound(Context context) {
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(context, notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void ringAlarm(Context context) {

@@ -23,17 +23,4 @@ public class TermsPolicyActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (NavigationHelper.handleOptionsMenu(this, item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

@@ -4,17 +4,17 @@
         android:icon="@drawable/ic_home"
         android:title="@string/title_home" />
     <item
-        android:id="@+id/nav_calendar"
-        android:icon="@drawable/ic_calendar"
-        android:title="@string/title_calendar" />
+        android:id="@+id/nav_insights"
+        android:icon="@drawable/ic_insights"
+        android:title="@string/title_insights" />
     <item
         android:id="@+id/nav_placeholder"
         android:title=""
         android:enabled="false" />
     <item
-        android:id="@+id/nav_insights"
-        android:icon="@drawable/ic_insights"
-        android:title="@string/title_insights" />
+        android:id="@+id/nav_calendar"
+        android:icon="@drawable/ic_calendar"
+        android:title="@string/title_calendar" />
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_profile"

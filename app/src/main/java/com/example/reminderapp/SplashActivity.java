@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -19,12 +20,32 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        checkConnectionAndProceed();
+    }
+
+    private void checkConnectionAndProceed() {
+        if (NetworkUtils.isNetworkAvailable(this)) {
+            proceedToNextScreen();
+        } else {
+            showNoInternetDialog();
+        }
+    }
+
+    private void showNoInternetDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.error_no_internet_title)
+                .setMessage(R.string.error_no_internet_msg)
+                .setCancelable(false)
+                .setPositiveButton(R.string.btn_try_again, (dialog, which) -> checkConnectionAndProceed())
+                .setNegativeButton(R.string.btn_exit, (dialog, which) -> finish())
+                .show();
+    }
+
+    private void proceedToNextScreen() {
         // 2.5-Second delay before moving to Next Screen
         new Handler().postDelayed(() -> {
             SharedPreferences userPrefs = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
             boolean isLoggedIn = userPrefs.getBoolean("is_logged_in", false);
-            // Check if any user is registered in the database (simpler check using SharedPreferences flag or just query DB)
-            // For now, let's use a flag 'is_registered'
             boolean isRegistered = userPrefs.getBoolean("is_registered", false);
             
             Intent intent;

@@ -20,4 +20,7 @@ public interface UserDao {
 
     @Query("SELECT * FROM users WHERE id = :id LIMIT 1")
     User getUserById(int id);
+
+    @Query("SELECT * FROM users")
+    List<User> getAllUsers();
 }

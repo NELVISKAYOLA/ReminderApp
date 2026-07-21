@@ -3,23 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cream_bg">
+    android:background="@color/app_background">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+    <include layout="@layout/layout_toolbar" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="New Reminder"
-            app:titleTextColor="@color/black" />
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -28,22 +16,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:padding="24dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Title"
                 android:layout_marginBottom="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/luxury_purple"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEventTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/black"
+                    android:textColor="@color/main_text"
                     android:textSize="18sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,16 +40,16 @@
                 android:layout_height="wrap_content"
                 android:hint="Notes"
                 android:layout_marginBottom="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/luxury_purple"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEventNotes"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:gravity="top"
-                    android:textColor="@color/black"
+                    android:textColor="@color/main_text"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -70,9 +58,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Date"
                 android:layout_marginBottom="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/luxury_purple"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEventDate"
@@ -80,7 +68,7 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:clickable="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/main_text"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,9 +77,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Time"
                 android:layout_marginBottom="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/luxury_purple"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEventTime"
@@ -99,25 +87,25 @@
                     android:layout_height="wrap_content"
                     android:focusable="false"
                     android:clickable="true"
-                    android:textColor="@color/black"
+                    android:textColor="@color/main_text"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Duration (e.g., 30 mins)"
+                android:hint="Duration"
                 android:layout_marginBottom="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/luxury_purple"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDuration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text"
-                    android:textColor="@color/black"
+                    android:textColor="@color/main_text"
                     android:textSize="16sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -125,28 +113,60 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Repeat"
-                android:textColor="@color/black"
+                android:textColor="@color/main_text"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
             <Spinner
                 android:id="@+id/spRepeat"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@android:drawable/editbox_background"
                 android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/card_background"
+                android:layout_marginBottom="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/swPrivate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_private_switch"
+                        android:textColor="@color/main_text"
+                        android:textStyle="bold"
+                        app:thumbTint="@color/primary"
+                        app:trackTint="@color/primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_private_desc"
+                        android:textColor="@color/secondary_text"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Priority"
-                android:textColor="@color/black"
+                android:textColor="@color/main_text"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
             <Spinner
                 android:id="@+id/spPriority"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@android:drawable/editbox_background"
                 android:layout_marginBottom="24dp" />
 
             <LinearLayout
@@ -159,23 +179,25 @@
                 <Button
                     android:id="@+id/btnCancel"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Cancel"
                     android:backgroundTint="#FF3B30"
                     android:textColor="@color/white"
-                    android:layout_marginEnd="8dp"/>
+                    android:layout_marginEnd="8dp"
+                    app:cornerRadius="16dp"/>
 
                 <Button
                     android:id="@+id/btnSave"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="56dp"
                     android:layout_weight="1"
                     android:text="Save"
-                    android:backgroundTint="@color/luxury_purple"
-                    android:textColor="@color/white"/>
+                    android:backgroundTint="@color/accent"
+                    android:textColor="@color/black"
+                    app:cornerRadius="16dp"/>
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
