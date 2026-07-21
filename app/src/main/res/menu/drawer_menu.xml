@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/title_home" />
+    <item
+        android:id="@+id/nav_app_setting"
+        android:icon="@drawable/ic_sun"
+        android:title="@string/menu_app_setting" />
+    <item
+        android:id="@+id/nav_private_reminders"
+        android:icon="@android:drawable/ic_lock_idle_lock"
+        android:title="@string/menu_private_reminders" />
+    <item
+        android:id="@+id/nav_insights"
+        android:icon="@drawable/ic_insights"
+        android:title="Activity Insights" />
+
+    <item
+        android:id="@+id/nav_admin_console"
+        android:icon="@drawable/ic_settings"
+        android:title="Admin Console"
+        android:visible="false" />
+
+    <item android:title="Support &amp; Legal">
+        <menu>
+            <item
+                android:id="@+id/nav_help"
+                android:title="Help &amp; Support" />
+            <item
+                android:id="@+id/nav_feedback"
+                android:title="User Feedback" />
+            <item
+                android:id="@+id/nav_about"
+                android:title="About" />
+            <item
+                android:id="@+id/nav_privacy"
+                android:title="@string/menu_privacy" />
+            <item
+                android:id="@+id/nav_terms"
+                android:title="@string/menu_terms" />
+            <item
+                android:id="@+id/nav_theme"
+                android:title="@string/menu_theme" />
+        </menu>
+    </item>
+</menu>

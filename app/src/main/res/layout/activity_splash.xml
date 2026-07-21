@@ -1,23 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1C1C1E"> <ImageView
-    android:id="@+id/app_logo"
-    android:layout_width="120dp"
-    android:layout_height="120dp"
-    android:layout_centerInParent="true"
-    android:src="@android:drawable/ic_lock_idle_alarm"
-    android:contentDescription="App Logo" />
+    android:background="@drawable/bg_splash_gradient">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/app_logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="Reminder AI"
-        android:textColor="#FFFFFF"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-</RelativeLayout>
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- App Logo with Luxury Lavender Tint -->
+        <ImageView
+            android:id="@+id/app_logo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:contentDescription="App Logo"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/luxury_lavender" />
+
+        <!-- App Title with Text Primary (Starlight) -->
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.1"
+            android:text="@string/splash_title_main"
+            android:textColor="@color/main_text"
+            android:textSize="32sp"
+            android:textStyle="bold" />
+
+        <!-- Sub Title with Luxury Lavender Accent -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="-4dp"
+            android:fontFamily="sans-serif-light"
+            android:letterSpacing="0.3"
+            android:text="@string/splash_title_sub"
+            android:textColor="@color/luxury_lavender"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <!-- Refined Footer Subtitle with Text Secondary (Dust) -->
+    <TextView
+        android:id="@+id/app_subtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:fontFamily="sans-serif-light"
+        android:letterSpacing="0.05"
+        android:text="@string/splash_subtitle"
+        android:textColor="@color/secondary_text"
+        android:textSize="14sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

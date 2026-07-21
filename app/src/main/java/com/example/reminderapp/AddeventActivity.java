@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +19,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,6 +34,7 @@ public class AddeventActivity extends AppCompatActivity {
 
     private EditText etEventTitle, etEventNotes, etEventDate, etEventTime, etDuration;
     private Spinner spRepeat, spPriority;
+    private MaterialSwitch swPrivate;
     private Button btnSave, btnCancel;
     private AppDatabase db;
     private int activeUserId;
@@ -45,7 +46,6 @@ public class AddeventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
 
-        NavigationHelper.setupNavigation(this);
         db = AppDatabase.getInstance(this);
 
         android.content.SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
@@ -59,16 +59,31 @@ public class AddeventActivity extends AppCompatActivity {
         etDuration = findViewById(R.id.etDuration);
         spRepeat = findViewById(R.id.spRepeat);
         spPriority = findViewById(R.id.spPriority);
+        swPrivate = findViewById(R.id.swPrivate);
         btnSave = findViewById(R.id.btnSave);
         btnCancel = findViewById(R.id.btnCancel);
 
         setupSpinners();
 
-        // Check for Edit Mode
+        // Check for Edit Mode or Prefill Date
         editReminderId = getIntent().getIntExtra("reminder_id", -1);
+        String prefillDate = getIntent().getStringExtra("prefill_date");
+
         if (editReminderId != -1) {
+            setTitle("Edit Reminder");
             loadReminderForEdit();
+        } else {
+            setTitle("Add Reminder");
+            if (prefillDate != null && !prefillDate.isEmpty()) {
+                etEventDate.setText(prefillDate);
+                try {
+                    String[] parts = prefillDate.split("-");
+                    selectedDateTime.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                } catch (Exception ignored) {}
+            }
         }
+
+        NavigationHelper.setupNavigation(this);
 
         etEventDate.setOnClickListener(v -> showDatePicker());
         etEventTime.setOnClickListener(v -> showTimePicker());
@@ -88,28 +103,29 @@ public class AddeventActivity extends AppCompatActivity {
     }
 
     private void loadReminderForEdit() {
-        ReminderEntity reminder = null;
         List<ReminderEntity> reminders = db.reminderDao().getRemindersForUser(activeUserId);
+        ReminderEntity targetReminder = null;
         for(ReminderEntity r : reminders) {
             if(r.getId() == editReminderId) {
-                reminder = r;
+                targetReminder = r;
                 break;
             }
         }
 
-        if (reminder != null) {
-            etEventTitle.setText(reminder.getTitle());
-            etEventNotes.setText(reminder.getNotes());
-            etEventDate.setText(reminder.getDate());
-            etEventTime.setText(reminder.getTime());
-            etDuration.setText(reminder.getDuration());
+        if (targetReminder != null) {
+            etEventTitle.setText(targetReminder.getTitle());
+            etEventNotes.setText(targetReminder.getNotes());
+            etEventDate.setText(targetReminder.getDate());
+            etEventTime.setText(targetReminder.getTime());
+            etDuration.setText(targetReminder.getDuration());
             
-            setSpinnerSelection(spRepeat, reminder.getRepeat());
-            setSpinnerSelection(spPriority, reminder.getPriority());
+            setSpinnerSelection(spRepeat, targetReminder.getRepeat());
+            setSpinnerSelection(spPriority, targetReminder.getPriority());
+            swPrivate.setChecked(targetReminder.isPrivate());
 
             try {
-                String[] dateParts = reminder.getDate().split("-");
-                String[] timeParts = reminder.getTime().split(":");
+                String[] dateParts = targetReminder.getDate().split("-");
+                String[] timeParts = targetReminder.getTime().split(":");
                 selectedDateTime.set(Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]) - 1, Integer.parseInt(dateParts[2]),
                         Integer.parseInt(timeParts[0]), Integer.parseInt(timeParts[1]));
             } catch (Exception ignored) {}
@@ -133,6 +149,7 @@ public class AddeventActivity extends AppCompatActivity {
         String duration = etDuration.getText().toString().trim();
         String repeat = spRepeat.getSelectedItem().toString();
         String priority = spPriority.getSelectedItem().toString();
+        boolean isPrivate = swPrivate.isChecked();
 
         if (title.isEmpty()) {
             Toast.makeText(this, "Title is mandatory!", Toast.LENGTH_SHORT).show();
@@ -150,7 +167,8 @@ public class AddeventActivity extends AppCompatActivity {
             return;
         }
 
-        ReminderEntity reminder = new ReminderEntity(activeUserId, title, notes, date, time, duration, repeat, priority);
+        ReminderEntity reminder = new ReminderEntity(activeUserId, title, notes, date, time, duration, repeat, priority, isPrivate);
+        reminder.setDateTime(selectedDateTime.getTimeInMillis());
         if (editReminderId != -1) {
             reminder.setId(editReminderId);
             db.reminderDao().update(reminder);
@@ -166,15 +184,29 @@ public class AddeventActivity extends AppCompatActivity {
 
     private void scheduleAlarm(ReminderEntity reminder) {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (alarmManager == null) return;
+
         Intent intent = new Intent(this, AlarmReceiver.class);
         intent.putExtra("title", reminder.getTitle());
         intent.putExtra("notes", reminder.getNotes());
+        intent.putExtra("priority", reminder.getPriority());
+        intent.putExtra("time", reminder.getTime());
+        intent.putExtra("duration", reminder.getDuration());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int)System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        // Use a unique ID for each alarm to prevent overwriting
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this, 
+                reminder.getId(), 
+                intent, 
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
 
-        if (alarmManager != null) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, selectedDateTime.getTimeInMillis(), pendingIntent);
-        }
+        // Schedule at the EXACT time set by the user
+        alarmManager.setExactAndAllowWhileIdle(
+                AlarmManager.RTC_WAKEUP, 
+                selectedDateTime.getTimeInMillis(), 
+                pendingIntent
+        );
     }
 
     private void showTimePicker() {
@@ -196,7 +228,8 @@ public class AddeventActivity extends AppCompatActivity {
             selectedDateTime.set(Calendar.YEAR, selectedYear);
             selectedDateTime.set(Calendar.MONTH, selectedMonth);
             selectedDateTime.set(Calendar.DAY_OF_MONTH, selectedDay);
-            etEventDate.setText(selectedYear + "-" + (selectedMonth + 1) + "-" + selectedDay);
+            String formattedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+            etEventDate.setText(formattedDate);
         }, year, month, day).show();
     }
 
@@ -219,15 +252,4 @@ public class AddeventActivity extends AppCompatActivity {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (NavigationHelper.handleOptionsMenu(this, item)) return true;
-        return super.onOptionsItemSelected(item);
-    }
 }
