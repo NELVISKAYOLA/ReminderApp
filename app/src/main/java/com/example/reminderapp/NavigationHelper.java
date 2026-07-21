@@ -73,7 +73,7 @@ public class NavigationHelper {
                     } else if (id == R.id.nav_help) {
                         activity.startActivity(new Intent(activity, HelpActivity.class));
                     } else if (id == R.id.nav_feedback) {
-                        activity.startActivity(new Intent(activity, FeedbackActivity.class));
+                        activity.startActivity(new Intent(activity, FeedbackChatActivity.class));
                     } else if (id == R.id.nav_about) {
                         activity.startActivity(new Intent(activity, AboutActivity.class));
                     } else if (id == R.id.nav_privacy) {
@@ -95,11 +95,12 @@ public class NavigationHelper {
         BottomNavigationView bottomNav = activity.findViewById(R.id.bottomNavigation);
         if (bottomNav != null) {
             // Highlighting based on activity type
+            String className = activity.getClass().getName();
             if (activity instanceof DashboardActivity) {
                 bottomNav.setSelectedItemId(R.id.nav_home);
-            } else if (activity.getClass().getSimpleName().equals("InsightsActivity")) {
+            } else if (className.endsWith("InsightsActivity")) {
                 bottomNav.setSelectedItemId(R.id.nav_insights);
-            } else if (activity.getClass().getSimpleName().equals("CalendarActivity")) {
+            } else if (className.endsWith("CalendarActivity")) {
                 bottomNav.setSelectedItemId(R.id.nav_calendar);
             } else if (activity instanceof ProfileActivity) {
                 bottomNav.setSelectedItemId(R.id.nav_profile);
@@ -110,8 +111,8 @@ public class NavigationHelper {
                 
                 // Don't navigate if we are already on that screen
                 if (id == R.id.nav_home && activity instanceof DashboardActivity) return true;
-                if (id == R.id.nav_insights && activity.getClass().getSimpleName().equals("InsightsActivity")) return true;
-                if (id == R.id.nav_calendar && activity.getClass().getSimpleName().equals("CalendarActivity")) return true;
+                if (id == R.id.nav_insights && activity.getClass().getName().endsWith("InsightsActivity")) return true;
+                if (id == R.id.nav_calendar && activity.getClass().getName().endsWith("CalendarActivity")) return true;
                 if (id == R.id.nav_profile && activity instanceof ProfileActivity) return true;
 
                 if (id == R.id.nav_home) {
@@ -132,7 +133,7 @@ public class NavigationHelper {
         FloatingActionButton fabAdd = activity.findViewById(R.id.fabAdd);
         if (fabAdd != null) {
             fabAdd.setOnClickListener(v -> {
-                activity.startActivity(new Intent(activity, AddeventActivity.class));
+                activity.startActivity(new Intent(activity, AddReminderActivity.class));
             });
         }
     }

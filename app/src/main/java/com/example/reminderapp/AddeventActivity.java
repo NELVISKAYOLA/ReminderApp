@@ -1,15 +1,12 @@
 package com.example.reminderapp;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +26,7 @@ import com.example.reminderapp.database.ReminderEntity;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class AddeventActivity extends AppCompatActivity {
 
@@ -92,7 +90,7 @@ public class AddeventActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = parent.getItemAtPosition(position).toString();
-                if (selected.equals("Custom")) showDatePicker();
+                if (Objects.equals(selected, "Custom")) showDatePicker();
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {}
@@ -173,40 +171,14 @@ public class AddeventActivity extends AppCompatActivity {
             reminder.setId(editReminderId);
             db.reminderDao().update(reminder);
         } else {
-            db.reminderDao().insert(reminder);
+            long id = db.reminderDao().insert(reminder);
+            reminder.setId((int) id);
         }
 
-        scheduleAlarm(reminder);
+        AlarmHelper.scheduleAlarm(this, reminder);
         playNotificationSound();
         Toast.makeText(this, "Reminder saved!", Toast.LENGTH_SHORT).show();
         finish();
-    }
-
-    private void scheduleAlarm(ReminderEntity reminder) {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (alarmManager == null) return;
-
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        intent.putExtra("title", reminder.getTitle());
-        intent.putExtra("notes", reminder.getNotes());
-        intent.putExtra("priority", reminder.getPriority());
-        intent.putExtra("time", reminder.getTime());
-        intent.putExtra("duration", reminder.getDuration());
-
-        // Use a unique ID for each alarm to prevent overwriting
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this, 
-                reminder.getId(), 
-                intent, 
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        // Schedule at the EXACT time set by the user
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP, 
-                selectedDateTime.getTimeInMillis(), 
-                pendingIntent
-        );
     }
 
     private void showTimePicker() {
@@ -239,7 +211,7 @@ public class AddeventActivity extends AppCompatActivity {
         repeatAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spRepeat.setAdapter(repeatAdapter);
 
-        String[] priorityOptions = {"Work", "Personal", "Urgent"};
+        String[] priorityOptions = {"Personal", "Work", "Urgent"};
         ArrayAdapter<String> priorityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, priorityOptions);
         priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spPriority.setAdapter(priorityAdapter);

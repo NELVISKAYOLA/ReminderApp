@@ -11,6 +11,12 @@ public interface FeedbackDao {
     @Insert
     long insert(FeedbackEntity feedback);
 
+    @Insert
+    void insertFeedbackMessage(FeedbackMessage message);
+
+    @Query("SELECT * FROM feedback_messages WHERE userId = :userId ORDER BY timestamp ASC")
+    List<FeedbackMessage> getFeedbackMessages(int userId);
+
     @Query("SELECT * FROM feedback WHERE userId = :userId ORDER BY timestamp ASC")
     List<FeedbackEntity> getFeedbackForUser(int userId);
 

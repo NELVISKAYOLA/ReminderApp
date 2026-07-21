@@ -49,10 +49,9 @@ public class ReminderDetailActivity extends AppCompatActivity {
         loadReminder();
 
         btnEdit.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AddeventActivity.class);
+            Intent intent = new Intent(this, AddReminderActivity.class);
             intent.putExtra("reminder_id", reminderId);
             startActivity(intent);
-            finish(); // Close detail view after starting edit
         });
 
         btnDelete.setOnClickListener(v -> {

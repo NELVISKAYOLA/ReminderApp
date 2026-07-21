@@ -1,7 +1,11 @@
 package com.example.reminderapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,19 +25,32 @@ import com.example.reminderapp.database.ReminderEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import androidx.core.content.ContextCompat;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    private RecyclerView rvReminders, rvRecentReminders;
+    public static final String ACTION_REMINDER_ADDED = "com.example.reminderapp.ACTION_REMINDER_ADDED";
+
+    private final BroadcastReceiver refreshReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            loadReminders();
+        }
+    };
+
+    private RecyclerView rvReminders, rvRecentReminders, rvUpcomingReminders;
     private View emptyStateLayout;
     private AppDatabase db;
     private int activeUserId;
-    private ReminderAdapter adapter, recentAdapter;
+    private ReminderAdapter adapter, recentAdapter, upcomingAdapter;
 
-    private TextView tvFullDate, tvReminderSummary, tvRecentHeader;
+    private TextView tvFullDate, tvReminderSummary, tvRecentHeader, tvUpcomingHeader;
     private android.widget.EditText etSearch;
     private List<ReminderEntity> currentTodaysReminders = new java.util.ArrayList<>();
 
@@ -52,10 +69,12 @@ public class DashboardActivity extends AppCompatActivity {
         activeUserId = prefs.getInt("active_user_id", -1);
 
         rvReminders = findViewById(R.id.rv_reminders);
+        rvUpcomingReminders = findViewById(R.id.rv_upcoming_reminders);
         rvRecentReminders = findViewById(R.id.rv_recent_reminders);
         emptyStateLayout = findViewById(R.id.empty_state_layout);
         tvFullDate = findViewById(R.id.tv_full_date);
         tvReminderSummary = findViewById(R.id.tv_reminder_summary);
+        tvUpcomingHeader = findViewById(R.id.tv_upcoming_header);
         tvRecentHeader = findViewById(R.id.tv_recent_header);
         etSearch = findViewById(R.id.etSearch);
         
@@ -63,12 +82,16 @@ public class DashboardActivity extends AppCompatActivity {
         adapter = new ReminderAdapter();
         rvReminders.setAdapter(adapter);
 
+        rvUpcomingReminders.setLayoutManager(new LinearLayoutManager(this));
+        upcomingAdapter = new ReminderAdapter();
+        rvUpcomingReminders.setAdapter(upcomingAdapter);
+
         rvRecentReminders.setLayoutManager(new LinearLayoutManager(this));
         recentAdapter = new ReminderAdapter();
         rvRecentReminders.setAdapter(recentAdapter);
 
         findViewById(R.id.fabAdd).setOnClickListener(v -> {
-            Intent intent = new Intent(DashboardActivity.this, AddeventActivity.class);
+            Intent intent = new Intent(DashboardActivity.this, AddReminderActivity.class);
             startActivity(intent);
         });
 
@@ -107,7 +130,18 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(refreshReceiver, new IntentFilter(ACTION_REMINDER_ADDED), Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(refreshReceiver, new IntentFilter(ACTION_REMINDER_ADDED));
+        }
         loadReminders();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(refreshReceiver);
     }
 
     private void loadReminders() {
@@ -119,25 +153,56 @@ public class DashboardActivity extends AppCompatActivity {
 
         new Thread(() -> {
             List<ReminderEntity> allPublicReminders = db.reminderDao().getPublicRemindersForUser(activeUserId);
+            
+            // 1. Today's and Overdue (Uncompleted)
             currentTodaysReminders = allPublicReminders.stream()
-                    .filter(r -> r.getDate().equals(todayStr) && !r.isCompleted())
+                    .filter(r -> !r.isCompleted() && (r.getDate().equals(todayStr) || r.getDateTime() < System.currentTimeMillis()))
+                    .sorted(Comparator.comparingLong(ReminderEntity::getDateTime))
+                    .collect(Collectors.toList());
+
+            // 2. Future Reminders (Uncompleted)
+            List<ReminderEntity> upcomingReminders = allPublicReminders.stream()
+                    .filter(r -> !r.isCompleted() && r.getDateTime() > System.currentTimeMillis() && !r.getDate().equals(todayStr))
+                    .sorted((r1, r2) -> {
+                        int dateComp = r1.getDate().compareTo(r2.getDate());
+                        if (dateComp != 0) return dateComp;
+                        return r1.getTime().compareTo(r2.getTime());
+                    })
                     .collect(Collectors.toList());
 
             List<ReminderEntity> recentCompleted = db.reminderDao().getRecentCompletedReminders(activeUserId);
 
             runOnUiThread(() -> {
+                // Handle Today/Overdue List
                 if (currentTodaysReminders.isEmpty()) {
                     rvReminders.setVisibility(View.GONE);
-                    emptyStateLayout.setVisibility(View.VISIBLE);
-                    tvReminderSummary.setText("You are all caught up!");
+                    if (upcomingReminders.isEmpty()) {
+                        emptyStateLayout.setVisibility(View.VISIBLE);
+                        tvReminderSummary.setText(R.string.empty_state_title);
+                    } else {
+                        emptyStateLayout.setVisibility(View.GONE);
+                        tvReminderSummary.setText(R.string.summary_no_tasks_today_but_upcoming);
+                    }
                 } else {
                     rvReminders.setVisibility(View.VISIBLE);
                     emptyStateLayout.setVisibility(View.GONE);
                     adapter.setReminders(currentTodaysReminders);
-                    String taskWord = currentTodaysReminders.size() == 1 ? "task" : "tasks";
-                    tvReminderSummary.setText("You have " + currentTodaysReminders.size() + " " + taskWord + " for today");
+                    int count = currentTodaysReminders.size();
+                    String taskWord = count == 1 ? "task" : "tasks";
+                    tvReminderSummary.setText(getString(R.string.summary_tasks_today, count, taskWord));
                 }
 
+                // Handle Upcoming List
+                if (upcomingReminders.isEmpty()) {
+                    tvUpcomingHeader.setVisibility(View.GONE);
+                    rvUpcomingReminders.setVisibility(View.GONE);
+                } else {
+                    tvUpcomingHeader.setVisibility(View.VISIBLE);
+                    rvUpcomingReminders.setVisibility(View.VISIBLE);
+                    upcomingAdapter.setReminders(upcomingReminders);
+                }
+
+                // Handle Recent List
                 if (recentCompleted.isEmpty()) {
                     tvRecentHeader.setVisibility(View.GONE);
                     rvRecentReminders.setVisibility(View.GONE);
@@ -170,12 +235,22 @@ public class DashboardActivity extends AppCompatActivity {
             ReminderEntity reminder = reminders.get(position);
             holder.tvContent.setText(reminder.getTitle());
             
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String todayStr = sdf.format(calendar.getTime());
+
             String timeText = reminder.getTime() + (reminder.getDuration().isEmpty() ? "" : " • " + reminder.getDuration());
+            
+            // Add date if it's not today
+            if (!Objects.equals(reminder.getDate(), todayStr)) {
+                timeText = reminder.getDate() + " • " + timeText;
+            }
+
             if (reminder.isOverdue()) {
-                holder.tvContent.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                holder.tvContent.setTextColor(ContextCompat.getColor(DashboardActivity.this, android.R.color.holo_red_dark));
                 timeText = "OVERDUE • " + timeText;
             } else {
-                holder.tvContent.setTextColor(getResources().getColor(R.color.main_text));
+                holder.tvContent.setTextColor(ContextCompat.getColor(DashboardActivity.this, R.color.main_text));
             }
             
             holder.tvSubtext.setText(timeText);

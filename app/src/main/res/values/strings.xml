@@ -17,6 +17,9 @@
     <string name="hint_search">Search reminders...</string>
     <string name="content_desc_search">Search reminders</string>
     <string name="title_reminders">Your Reminders</string>
+    <string name="title_upcoming">Upcoming Reminders</string>
+    <string name="summary_tasks_today">You have %1$d %2$s for today</string>
+    <string name="summary_no_tasks_today_but_upcoming">No tasks for today, but you have upcoming ones.</string>
     <string name="empty_state_title">You\'re all caught up!</string>
     <string name="empty_state_subtitle">Tap the + button to add a new reminder.</string>
     <string name="content_desc_empty_state">Illustration of an empty list</string>

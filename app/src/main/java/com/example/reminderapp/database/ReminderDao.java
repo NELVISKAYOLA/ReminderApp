@@ -36,4 +36,10 @@ public interface ReminderDao {
 
     @Query("SELECT * FROM reminders WHERE userId = :userId AND date = :date AND isPrivate = 0 ORDER BY time ASC")
     List<ReminderEntity> getPublicRemindersForDate(int userId, String date);
+
+    @Query("SELECT * FROM reminders WHERE id = :id LIMIT 1")
+    ReminderEntity getReminderById(int id);
+
+    @Query("SELECT * FROM reminders WHERE isCompleted = 0")
+    List<ReminderEntity> getAllUncompletedReminders();
 }

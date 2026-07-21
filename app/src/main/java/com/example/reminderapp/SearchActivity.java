@@ -91,7 +91,7 @@ public class SearchActivity extends AppCompatActivity {
         });
 
         btnAddFromSearch.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AddeventActivity.class);
+            Intent intent = new Intent(this, AddReminderActivity.class);
             intent.putExtra("prefill_date", lastSearchQuery);
             startActivity(intent);
         });

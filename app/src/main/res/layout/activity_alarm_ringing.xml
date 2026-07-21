@@ -22,9 +22,10 @@
             android:layout_marginBottom="32dp"/>
 
         <TextView
+            android:id="@+id/tvAlarmTypeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="URGENT REMINDER"
+            android:text="REMINDER ALERT"
             android:textColor="@color/luxury_lavender"
             android:textStyle="bold"
             android:letterSpacing="0.2"

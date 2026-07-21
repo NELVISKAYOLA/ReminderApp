@@ -127,6 +127,26 @@
                         </LinearLayout>
 
                         <TextView
+                            android:id="@+id/tv_upcoming_header"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="24dp"
+                            android:layout_marginTop="24dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="@string/title_upcoming"
+                            android:textColor="@color/primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:visibility="gone" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_upcoming_reminders"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            tools:listitem="@layout/item_card" />
+
+                        <TextView
                             android:id="@+id/tv_recent_header"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
