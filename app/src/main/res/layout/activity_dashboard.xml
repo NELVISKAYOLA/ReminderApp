@@ -13,24 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/app_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:title="Today"
-                app:titleTextColor="@color/main_text"
-                app:navigationIcon="@drawable/ic_menu"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:contentInsetStart="16dp" />
-
-        </com.google.android.material.appbar.AppBarLayout>
+        <include layout="@layout/layout_toolbar" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -52,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Thursday, 20 March"
-                    android:textColor="@color/luxury_purple"
+                    android:textColor="@color/primary"
                     android:textSize="28sp"
                     android:textStyle="bold"
                     android:letterSpacing="-0.02" />
@@ -151,7 +134,7 @@
                             android:layout_marginTop="24dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/title_recent_finished"
-                            android:textColor="@color/luxury_purple"
+                            android:textColor="@color/primary"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:visibility="gone" />
@@ -194,9 +177,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/luxury_purple"
+            app:backgroundTint="@color/accent"
             app:layout_anchor="@id/bottomAppBar"
-            app:tint="@color/white"
+            app:tint="@color/black"
             android:contentDescription="Add New" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

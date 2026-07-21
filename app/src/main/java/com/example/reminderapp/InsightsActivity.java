@@ -65,11 +65,6 @@ public class InsightsActivity extends AppCompatActivity {
         tvUrgentTasksCount.setText(String.valueOf(priorities.size()));
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
 
     private class PriorityAdapter extends RecyclerView.Adapter<PriorityAdapter.ViewHolder> {
         private List<ReminderEntity> reminders;

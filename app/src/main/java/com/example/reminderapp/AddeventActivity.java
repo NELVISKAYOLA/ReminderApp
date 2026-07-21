@@ -46,7 +46,6 @@ public class AddeventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
 
-        NavigationHelper.setupNavigation(this);
         db = AppDatabase.getInstance(this);
 
         android.content.SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
@@ -71,14 +70,20 @@ public class AddeventActivity extends AppCompatActivity {
         String prefillDate = getIntent().getStringExtra("prefill_date");
 
         if (editReminderId != -1) {
+            setTitle("Edit Reminder");
             loadReminderForEdit();
-        } else if (prefillDate != null && !prefillDate.isEmpty()) {
-            etEventDate.setText(prefillDate);
-            try {
-                String[] parts = prefillDate.split("-");
-                selectedDateTime.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
-            } catch (Exception ignored) {}
+        } else {
+            setTitle("Add Reminder");
+            if (prefillDate != null && !prefillDate.isEmpty()) {
+                etEventDate.setText(prefillDate);
+                try {
+                    String[] parts = prefillDate.split("-");
+                    selectedDateTime.set(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) - 1, Integer.parseInt(parts[2]));
+                } catch (Exception ignored) {}
+            }
         }
+
+        NavigationHelper.setupNavigation(this);
 
         etEventDate.setOnClickListener(v -> showDatePicker());
         etEventTime.setOnClickListener(v -> showTimePicker());
@@ -247,14 +252,4 @@ public class AddeventActivity extends AppCompatActivity {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
 }

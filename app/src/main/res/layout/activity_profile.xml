@@ -13,20 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            app:elevation="0dp">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:title="Profile"
-                app:titleTextColor="@color/main_text"
-                app:navigationIcon="@drawable/ic_arrow_back" /> <!-- Added back arrow -->
-        </com.google.android.material.appbar.AppBarLayout>
+        <include layout="@layout/layout_toolbar" />
 
         <!-- Use NestedScrollView for proper scrolling with RecyclerView -->
         <androidx.core.widget.NestedScrollView
@@ -64,8 +51,8 @@
                         android:layout_gravity="bottom|end"
                         app:fabSize="mini"
                         app:srcCompat="@drawable/ic_camera"
-                        app:backgroundTint="@color/luxury_purple"
-                        app:tint="@color/white"
+                        app:backgroundTint="@color/accent"
+                        app:tint="@color/black"
                         android:contentDescription="Change Picture" />
                 </FrameLayout>
 
@@ -182,9 +169,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add"
-            app:backgroundTint="@color/luxury_purple"
+            app:backgroundTint="@color/accent"
             app:layout_anchor="@id/bottomAppBar"
-            app:tint="@color/white"
+            app:tint="@color/black"
             android:contentDescription="Add New Reminder" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

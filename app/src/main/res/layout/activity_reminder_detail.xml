@@ -6,21 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/app_background">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Reminder Details"
-            app:titleTextColor="@color/main_text"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:navigationIconTint="@color/main_text" />
-    </com.google.android.material.appbar.AppBarLayout>
+    <include layout="@layout/layout_toolbar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -83,7 +69,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_calendar"
-                            app:tint="@color/luxury_lavender" />
+                            app:tint="@color/primary" />
 
                         <TextView
                             android:id="@+id/tvDetailDate"
@@ -99,7 +85,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@android:drawable/ic_lock_idle_alarm"
-                            app:tint="@color/luxury_lavender" />
+                            app:tint="@color/primary" />
 
                         <TextView
                             android:id="@+id/tvDetailTime"
@@ -114,7 +100,8 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#1AFFFFFF"
+                        android:background="@color/divider"
+                        android:alpha="0.2"
                         android:layout_marginBottom="16dp" />
 
                     <!-- Priority & Repeat -->
@@ -179,9 +166,9 @@
                     android:layout_weight="1"
                     android:text="Edit"
                     app:icon="@drawable/ic_camera"
-                    app:iconTint="@color/on_lavender"
-                    android:backgroundTint="@color/luxury_lavender"
-                    android:textColor="@color/on_lavender" />
+                    app:iconTint="@color/black"
+                    android:backgroundTint="@color/accent"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
         </LinearLayout>
@@ -213,9 +200,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_add"
-        app:backgroundTint="@color/luxury_lavender"
+        app:backgroundTint="@color/accent"
         app:layout_anchor="@id/bottomAppBar"
-        app:tint="@color/on_lavender"
+        app:tint="@color/black"
         android:contentDescription="Add New Reminder" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

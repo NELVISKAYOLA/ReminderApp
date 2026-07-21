@@ -5,20 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/app_background">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="Help &amp; Support"
-            app:titleTextColor="@color/main_text"
-            app:navigationIcon="@drawable/ic_arrow_back" />
-    </com.google.android.material.appbar.AppBarLayout>
+    <include layout="@layout/layout_toolbar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -35,7 +22,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Frequently Asked Questions"
-                android:textColor="@color/luxury_purple"
+                android:textColor="@color/primary"
                 android:textSize="18dp"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp" />
@@ -111,7 +98,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Chat with Support"
                 app:cornerRadius="12dp"
-                android:backgroundTint="@color/luxury_purple"
+                android:backgroundTint="@color/primary"
                 android:textColor="@color/white" />
 
         </LinearLayout>

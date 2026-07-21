@@ -2,13 +2,14 @@ package com.example.reminderapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,28 +17,39 @@ import com.google.android.material.navigation.NavigationView;
 
 public class NavigationHelper {
 
+    private static final String TAG = "NavigationHelper";
+
     public static void setupNavigation(final AppCompatActivity activity) {
         Toolbar toolbar = activity.findViewById(R.id.toolbar);
         if (toolbar != null) {
             activity.setSupportActionBar(toolbar);
             if (activity.getSupportActionBar() != null) {
-                activity.getSupportActionBar().setDisplayShowTitleEnabled(true);
+                activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
             }
+            
+            TextView titleView = toolbar.findViewById(R.id.toolbar_title);
+            if (titleView != null) {
+                titleView.setText(activity.getTitle());
+            }
+
+            // Always use navigation icon for back
+            toolbar.setNavigationOnClickListener(v -> activity.getOnBackPressedDispatcher().onBackPressed());
         }
 
         // Setup Drawer (if present)
         DrawerLayout drawer = activity.findViewById(R.id.drawer_layout);
         NavigationView navigationView = activity.findViewById(R.id.nav_view);
-        if (drawer != null && toolbar != null) {
-            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    activity, drawer, toolbar, R.string.app_name, R.string.app_name);
-            drawer.addDrawerListener(toggle);
-            toggle.syncState();
-            
-            if (activity.getSupportActionBar() != null) {
-                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                activity.getSupportActionBar().setHomeButtonEnabled(true);
-            }
+        View menuIcon = activity.findViewById(R.id.iv_menu_toolbar);
+
+        if (drawer != null && menuIcon != null) {
+            menuIcon.setVisibility(View.VISIBLE);
+            menuIcon.setOnClickListener(v -> {
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                } else {
+                    drawer.openDrawer(GravityCompat.START);
+                }
+            });
 
             if (navigationView != null) {
                 // Admin check
@@ -55,7 +67,7 @@ public class NavigationHelper {
                     } else if (id == R.id.nav_private_reminders) {
                         activity.startActivity(new Intent(activity, PrivateRemindersActivity.class));
                     } else if (id == R.id.nav_insights) {
-                        activity.startActivity(new Intent(activity, InsightsActivity.class));
+                        startActivityByName(activity, "com.example.reminderapp.InsightsActivity");
                     } else if (id == R.id.nav_admin_console) {
                         activity.startActivity(new Intent(activity, AdminDashboardActivity.class));
                     } else if (id == R.id.nav_help) {
@@ -75,17 +87,19 @@ public class NavigationHelper {
                     return true;
                 });
             }
+        } else if (menuIcon != null) {
+            menuIcon.setVisibility(View.GONE);
         }
 
         // Bottom Navigation
         BottomNavigationView bottomNav = activity.findViewById(R.id.bottomNavigation);
         if (bottomNav != null) {
-            // Highlighting
+            // Highlighting based on activity type
             if (activity instanceof DashboardActivity) {
                 bottomNav.setSelectedItemId(R.id.nav_home);
-            } else if (activity instanceof InsightsActivity) {
+            } else if (activity.getClass().getSimpleName().equals("InsightsActivity")) {
                 bottomNav.setSelectedItemId(R.id.nav_insights);
-            } else if (activity instanceof CalendarActivity) {
+            } else if (activity.getClass().getSimpleName().equals("CalendarActivity")) {
                 bottomNav.setSelectedItemId(R.id.nav_calendar);
             } else if (activity instanceof ProfileActivity) {
                 bottomNav.setSelectedItemId(R.id.nav_profile);
@@ -93,22 +107,23 @@ public class NavigationHelper {
 
             bottomNav.setOnItemSelectedListener(item -> {
                 int id = item.getItemId();
-                Intent intent = null;
-                if (id == R.id.nav_home && !(activity instanceof DashboardActivity)) {
-                    intent = new Intent(activity, DashboardActivity.class);
-                } else if (id == R.id.nav_insights && !(activity instanceof InsightsActivity)) {
-                    intent = new Intent(activity, InsightsActivity.class);
-                } else if (id == R.id.nav_calendar && !(activity instanceof CalendarActivity)) {
-                    intent = new Intent(activity, CalendarActivity.class);
-                } else if (id == R.id.nav_profile && !(activity instanceof ProfileActivity)) {
-                    intent = new Intent(activity, ProfileActivity.class);
+                
+                // Don't navigate if we are already on that screen
+                if (id == R.id.nav_home && activity instanceof DashboardActivity) return true;
+                if (id == R.id.nav_insights && activity.getClass().getSimpleName().equals("InsightsActivity")) return true;
+                if (id == R.id.nav_calendar && activity.getClass().getSimpleName().equals("CalendarActivity")) return true;
+                if (id == R.id.nav_profile && activity instanceof ProfileActivity) return true;
+
+                if (id == R.id.nav_home) {
+                    startActivityWithFlag(activity, DashboardActivity.class);
+                } else if (id == R.id.nav_insights) {
+                    startActivityByName(activity, "com.example.reminderapp.InsightsActivity");
+                } else if (id == R.id.nav_calendar) {
+                    startActivityByName(activity, "com.example.reminderapp.CalendarActivity");
+                } else if (id == R.id.nav_profile) {
+                    startActivityWithFlag(activity, ProfileActivity.class);
                 }
 
-                if (intent != null) {
-                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    activity.startActivity(intent);
-                    return true;
-                }
                 return id != R.id.nav_placeholder;
             });
         }
@@ -119,6 +134,22 @@ public class NavigationHelper {
             fabAdd.setOnClickListener(v -> {
                 activity.startActivity(new Intent(activity, AddeventActivity.class));
             });
+        }
+    }
+
+    private static void startActivityWithFlag(AppCompatActivity activity, Class<?> cls) {
+        Intent intent = new Intent(activity, cls);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        activity.startActivity(intent);
+    }
+
+    private static void startActivityByName(AppCompatActivity activity, String className) {
+        try {
+            Intent intent = new Intent(activity, Class.forName(className));
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            activity.startActivity(intent);
+        } catch (ClassNotFoundException e) {
+            Log.e(TAG, "Activity class not found: " + className, e);
         }
     }
 }

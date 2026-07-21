@@ -80,11 +80,6 @@ public class CalendarActivity extends AppCompatActivity {
         }).start();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
 
     private class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.ViewHolder> {
         private List<ReminderEntity> reminders = new ArrayList<>();

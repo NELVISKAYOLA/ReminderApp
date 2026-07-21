@@ -1,21 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Deep Space & Lavender Palette -->
-    <color name="app_background">#0F0F11</color>
-    <color name="card_background">#18181B</color>
-    <color name="luxury_lavender">#C084FC</color>
-    <color name="on_lavender">#3B0764</color>
-    <color name="main_text">#FAFAFA</color>
-    <color name="secondary_text">#71717A</color>
-    <color name="error_rose">#FB7185</color>
-    <color name="white">#FFFFFF</color>
+    <!-- Professional Indigo & Amber Palette -->
+    <color name="primary">#1A237E</color>
+    <color name="primary_light">#534BAE</color>
+    <color name="primary_dark">#000051</color>
+    <color name="accent">#FFAB00</color>
 
-    <!-- Semantic Aliases for backward compatibility/consistency -->
-    <color name="luxury_purple">@color/luxury_lavender</color>
+    <color name="app_background">#F5F5F7</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="card_background">@color/surface</color>
+
+    <color name="main_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="divider">#BDBDBD</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="error_rose">#D32F2F</color>
+
+    <!-- Semantic Aliases for consistency across older layouts -->
+    <color name="luxury_purple">@color/primary</color>
+    <color name="luxury_lavender">@color/primary_light</color>
+    <color name="on_lavender">@color/white</color>
     <color name="cream_bg">@color/app_background</color>
-    <color name="date_blue">@color/luxury_lavender</color>
+    <color name="date_blue">@color/primary</color>
     <color name="background_gray">@color/app_background</color>
     <color name="text_gray">@color/secondary_text</color>
     <color name="subtext_color">@color/secondary_text</color>
-    <color name="black">#FF000000</color>
 </resources>

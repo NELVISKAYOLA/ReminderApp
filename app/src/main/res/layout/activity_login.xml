@@ -44,10 +44,10 @@
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/secondary_text"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
                 app:startIconDrawable="@android:drawable/ic_dialog_email"
-                app:startIconTint="@color/secondary_text"
+                app:startIconTint="@color/primary"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/credentials_text_color" />
+                    android:textColor="@color/main_text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -71,12 +71,12 @@
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
-                app:boxStrokeColor="@color/luxury_purple"
-                app:hintTextColor="@color/secondary_text"
+                app:boxStrokeColor="@color/primary"
+                app:hintTextColor="@color/primary"
                 app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                app:startIconTint="@color/secondary_text"
+                app:startIconTint="@color/primary"
                 app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/secondary_text"
+                app:passwordToggleTint="@color/primary"
                 app:layout_constraintTop_toBottomOf="@id/emailBox"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:textColor="@color/credentials_text_color" />
+                    android:textColor="@color/main_text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
